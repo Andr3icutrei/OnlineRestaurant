@@ -1,0 +1,118 @@
+﻿<Window x:Class="OnlineRestaurant.UI.View.AddItemWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OnlineRestaurant.UI.View"
+        xmlns:converters="clr-namespace:OnlineRestaurant.UI.Converters"
+        mc:Ignorable="d"
+        Title="AddItemWindow" Height="550" Width="1000">
+
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/View/Resources/PapasButtonStyle.xaml"/>
+                <ResourceDictionary Source="/View/Resources/Background.xaml"/>
+                <ResourceDictionary Source="/View/Resources/FontStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:DynamicPropertyConverter x:Key="DynamicPropertyConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Style="{StaticResource PapasPizzeriaBackground}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!--top label-->
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="Auto"/>
+                <!--name-->
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>
+                <!--price-->
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>
+                <!--portion quantity-->
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>
+                <!--total portion-->
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>
+                <!--food category-->
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Style="{StaticResource PapasPizzeriaLabelStyle}" FontSize="22">
+                <TextBlock>
+            Add a new item to the database!
+                </TextBlock>
+            </Label>
+
+            <Label Grid.Row="2" Content="Item Name:" FontSize="20" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
+            <TextBox Grid.Row="4" Text="{Binding ItemNameText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="245" Height="20" HorizontalAlignment="Left" Margin="5,0,0,37" Grid.RowSpan="2"/>
+
+            <Label Grid.Row="5" Content="Price:" FontSize="20" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
+            <TextBox Grid.Row="5" Text="{Binding PriceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBox_Pasting" Width="196" Height="20" HorizontalAlignment="Left" Margin="5,37,0,0" Grid.RowSpan="3"/>
+
+            <Label Grid.Row="8" Content="Portion quantity:" FontSize="20" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
+            <TextBox Grid.Row="8" Text="{Binding PortionQuantityText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBox_Pasting" Width="195" Height="20" HorizontalAlignment="Left" Margin="5,38,0,0" Grid.RowSpan="3"/>
+
+            <Label Grid.Row="11" Content="Total quantity(kg):" FontSize="20" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
+            <TextBox Grid.Row="11" Text="{Binding TotalQuantityText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBox_Pasting" Width="195" Height="20" HorizontalAlignment="Left" Margin="5,38,0,0" Grid.RowSpan="3"/>
+
+            <Label Grid.Row="14" Content="Food category:" FontSize="20" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
+            <ComboBox Grid.Row="15" ItemsSource="{Binding FoodCategoryItems}" DisplayMemberPath="Type" SelectedItem="{Binding SelectedFoodCategory}" SelectedIndex="{Binding SelectedFoodCategoryIndex}" Width="195" HorizontalAlignment="Left" Margin="5,20,0,0" Grid.RowSpan="2"/>
+
+            <Grid Grid.Row="18">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Command="{Binding AddItemCommand}" Content="Add item" Style="{StaticResource PepperoniButtonStyle}" Width="100"/>
+                <Button Grid.Column="1" Command="{Binding CancelCommand}" Content="Cancel" Style="{StaticResource PizzaButtonStyle}" Margin="0,0,16,0"/>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <DataGrid Grid.Column="0"
+                  x:Name="DynamicGridItemPictures"
+                  ItemsSource="{Binding CurrentDataItemPictures}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  IsReadOnly="True"
+                  Margin="20"
+                  CanUserResizeColumns="True"
+                  ColumnWidth="SizeToCells">
+            </DataGrid>
+
+            <DataGrid Grid.Column="1" x:Name="DynamicGridAllergens"
+                ItemsSource="{Binding CurrentDataAllergens}"
+                AutoGenerateColumns="False"
+                CanUserAddRows="False"
+                IsReadOnly="True"
+                Margin="20"
+                CanUserResizeColumns="True"
+                ColumnWidth="SizeToCells">
+            </DataGrid>
+        </Grid>
+        
+    </Grid>
+</Window>

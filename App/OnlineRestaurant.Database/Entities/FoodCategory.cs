@@ -9,7 +9,7 @@ namespace OnlineRestaurant.Database.Entities
 {
     public class FoodCategory : BaseEntity
     {
-        public FoodCategoryType Type { get; set; }
+        public string Type { get; set; }
 
         // references 
         public ICollection<Menu> Menus { get; set; }

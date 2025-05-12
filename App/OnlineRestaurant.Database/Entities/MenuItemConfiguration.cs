@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 namespace OnlineRestaurant.Database.Entities
 {
-    public class OrderItem : BaseEntity
+    public class MenuItemConfiguration : BaseEntity
     {
-        // foreign keys
-        public int OrderId {  get; set; }
-        public Order Order { get; set; }
+        public int MenuId { get; set; }
+        public Menu Menu { get; set; }
 
         public int ItemId { get; set; }
         public Item Item { get; set; }
+
+        // Override for menu-specific portion
+        public float? MenuPortionQuantity { get; set; }
     }
 }

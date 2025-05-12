@@ -1,0 +1,52 @@
+﻿<Window x:Class="OnlineRestaurant.UI.View.AddAllergenWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OnlineRestaurant.UI.View"
+        mc:Ignorable="d"
+        Title="AddAllergenindow" Height="450" Width="300">
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/View/Resources/PapasButtonStyle.xaml"/>
+                <ResourceDictionary Source="/View/Resources/Background.xaml"/>
+                <ResourceDictionary Source="/View/Resources/FontStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Style="{StaticResource PapasPizzeriaBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="90"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Style="{StaticResource PapasPizzeriaLabelStyle}" FontSize="22">
+            <TextBlock>
+                Add a new allergen to the
+                <LineBreak/>
+                database!
+            </TextBlock>
+        </Label>
+
+        <Label Grid.Row="2" Content="Allergen name:" FontSize="20" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
+        <TextBox Grid.Row="4" Text="{Binding AllergenNameText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="6,0,84,65" />
+
+        <Grid Grid.Row="6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Command="{Binding AddAllergenCommand}" Content="Add allergen" Style="{StaticResource PepperoniButtonStyle}" Width="100"/>
+            <Button Grid.Column="1" Command="{Binding CancelCommand}" Content="Cancel" Style="{StaticResource PizzaButtonStyle}" Margin="0,0,16,0"/>
+        </Grid>
+    </Grid>
+</Window>

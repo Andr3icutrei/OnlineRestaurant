@@ -13,7 +13,8 @@ namespace OnlineRestaurant.Database.Entities
         public FoodCategory FoodCategory { get; set; }
 
         //references
-        public ICollection<MenuItem> MenusItems { get; set; }
-        public ICollection<OrderMenu> OrdersMenus { get; set; }
+        public ICollection<Item> Items { get; set; }
+        public ICollection<Order> Orders { get; set; }
+        public ICollection<MenuItemConfiguration> ItemConfigurations { get; set; }
     }
 }

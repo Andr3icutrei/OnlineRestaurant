@@ -25,18 +25,27 @@ namespace OnlineRestaurant.Database.Context
                         {
                             relationship.DeleteBehavior = DeleteBehavior.Restrict;
                         }
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<FoodCategory>()
+                .HasIndex(fc => fc.Type)
+                .IsUnique();
+
+            modelBuilder.Entity<Allergen>()
+                .HasIndex(a => a.Type)
+                .IsUnique();
         }
 
         public DbSet<Allergen> Allergens { get; set; }
         public DbSet<FoodCategory> FoodCategories { get; set; }
         public DbSet<Item> Items { get; set; }
-        public DbSet<ItemAllergen> ItemsAllergens { get; set; }
         public DbSet<ItemPicture> ItemPictures { get; set; }
         public DbSet<Menu> Menus { get; set; }
-        public DbSet<MenuItem> MenusItems { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderItem> OrdersItems { get; set; }
-        public DbSet<OrderMenu> OrdersMenus { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<MenuItemConfiguration> MenuItemConfigurations { get; set; }
      }
 }

@@ -16,7 +16,7 @@ namespace OnlineRestaurant.Database.Entities
         public User User { get; set; }
 
         // references
-        public ICollection<OrderItem> OrdersItems { get; set; }
-        public ICollection<OrderMenu> OrderMenus { get; set; }
+        public ICollection<Item> Items { get; set; }
+        public ICollection<Menu> Menus { get; set; }
     }
 }

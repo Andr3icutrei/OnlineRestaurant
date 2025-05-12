@@ -1,0 +1,55 @@
+﻿<Window x:Class="OnlineRestaurant.UI.View.AdministrationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OnlineRestaurant.UI.View"
+        mc:Ignorable="d"
+        Title="AdministrationWindow" Height="450" Width="800">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/View/Resources/PapasButtonStyle.xaml"/>
+                <ResourceDictionary Source="/View/Resources/Background.xaml"/>
+                <ResourceDictionary Source="/View/Resources/FontStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Style="{StaticResource PizzaContentPanelStyle}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" MinWidth="90"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Button Command="{Binding InsertCommand}" Content="Insert" Style="{StaticResource ChefHatButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Height="60" Width="120"/>
+            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding ComboBoxItems}" SelectedItem="{Binding InsertSelectedItem}" Width="90" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+            <Button Command="{Binding ModifyCommand}" Grid.Row="1" Content="Modify" Style="{StaticResource LogoButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="78" Height="51"/>
+            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding ComboBoxItems}" SelectedItem="{Binding ModifySelectedItem}" Width="90" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+            <Button Command="{Binding DisplayAllCommand}" Grid.Row="2" Content="Display all from" Style="{StaticResource PizzaButtonStyle}" Height="47" Margin="0,44,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" Width="108"/>
+            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding ComboBoxItems}" SelectedItem="{Binding DisplayAllSelectedItem}" Width="90" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+            <Button Command="{Binding DeleteCommand}" Grid.Row="3" Content="Delete" Style="{StaticResource PepperoniButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Height="40" Width="40"/>
+            <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ComboBoxItems}" SelectedItem="{Binding DeleteSelectedItem}" Width="90" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
+        <Grid Grid.Column="1">
+            
+        </Grid>
+    </Grid>
+</Window>

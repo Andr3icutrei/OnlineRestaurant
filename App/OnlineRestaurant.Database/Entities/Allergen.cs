@@ -9,9 +9,9 @@ namespace OnlineRestaurant.Database.Entities
 {
     public class Allergen : BaseEntity
     {
-        public AllergenType Type { get; set; }
+        public string Type { get; set; }
 
         // references
-        public ICollection<ItemAllergen> ItemsAllergens { get; set; }
+        public ICollection<Item> Items { get; set; }
     }
 }

@@ -1,0 +1,75 @@
+﻿<Window x:Class="OnlineRestaurant.UI.View.RegisterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OnlineRestaurant.UI.View"
+        xmlns:vm="clr-namespace:OnlineRestaurant.UI.ViewModel"
+        mc:Ignorable="d"
+        Title="RegisterWindow" Height="550" Width="400">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/View/Resources/PapasButtonStyle.xaml"/>
+                <ResourceDictionary Source="/View/Resources/Background.xaml"/>
+                <ResourceDictionary Source="/View/Resources/FontStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Style="{StaticResource PizzaContentPanelStyle}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Content="Create your user account!" FontSize="28" Style="{StaticResource PapasPizzeriaLabelStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Height="49" Width="360"/>
+
+        <Label Grid.Row="2" Content="First Name:" Style="{StaticResource PapasPizzeriaLabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <TextBox Grid.Row="3" Text="{Binding FirstNameText,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Width="195" Margin="5,0,0,20" Grid.RowSpan="2"/>
+
+        <Label Grid.Row="5" Content="Last Name:" Style="{StaticResource PapasPizzeriaLabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="78"/>
+        <TextBox Grid.Row="6" Text="{Binding LastNameText,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Width="195" Margin="5,0,0,20" Grid.RowSpan="2"/>
+
+        <Label Grid.Row="8" Content="Email:" Style="{StaticResource PapasPizzeriaLabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Height="27" Width="46"/>
+        <TextBox Grid.Row="9" Text="{Binding EmailText,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Width="195" Margin="5,0,0,20" Grid.RowSpan="2"/>
+
+        <Label Grid.Row="11" Content="Phone number:" Style="{StaticResource PapasPizzeriaLabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Height="27" Width="94"/>
+        <TextBox Grid.Row="12" Text="{Binding PhoneNumberText,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Width="195" Margin="5,0,0,20" Grid.RowSpan="2"/>
+
+        <Label Grid.Row="14" Content="Address :" Style="{StaticResource PapasPizzeriaLabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="68"/>
+        <TextBox Grid.Row="15" Text="{Binding AddressText,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,10,27" Grid.RowSpan="3" />
+
+        <Label Grid.Row="17" Content="Password :" Style="{StaticResource PapasPizzeriaLabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Height="27" Width="72"/>
+        <TextBox Grid.Row="18" Text="{Binding PasswordText,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,200,95" Grid.RowSpan="2" />
+
+        <Grid Grid.Row="19">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Command="{Binding CreateAccountCommand}" Style="{StaticResource PepperoniButtonStyle}" Content="Create Account" Width="120" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Button Grid.Column="1" Command="{Binding CancelCommand}" Style="{StaticResource PizzaButtonStyle}" Content="Cancel" Width="80" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
+    </Grid>
+</Window>

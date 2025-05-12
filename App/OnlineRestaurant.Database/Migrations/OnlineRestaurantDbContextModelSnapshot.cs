@@ -22,6 +22,66 @@ namespace OnlineRestaurant.Database.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AllergenItem", b =>
+                {
+                    b.Property<int>("AllergensId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AllergensId", "ItemsId");
+
+                    b.HasIndex("ItemsId");
+
+                    b.ToTable("AllergenItem");
+                });
+
+            modelBuilder.Entity("ItemMenu", b =>
+                {
+                    b.Property<int>("ItemsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MenusId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ItemsId", "MenusId");
+
+                    b.HasIndex("MenusId");
+
+                    b.ToTable("ItemMenu");
+                });
+
+            modelBuilder.Entity("ItemOrder", b =>
+                {
+                    b.Property<int>("ItemsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrdersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ItemsId", "OrdersId");
+
+                    b.HasIndex("OrdersId");
+
+                    b.ToTable("ItemOrder");
+                });
+
+            modelBuilder.Entity("MenuOrder", b =>
+                {
+                    b.Property<int>("MenusId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrdersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MenusId", "OrdersId");
+
+                    b.HasIndex("OrdersId");
+
+                    b.ToTable("MenuOrder");
+                });
+
             modelBuilder.Entity("OnlineRestaurant.Database.Entities.Allergen", b =>
                 {
                     b.Property<int>("Id")
@@ -39,10 +99,14 @@ namespace OnlineRestaurant.Database.Migrations
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Type")
+                        .IsUnique();
 
                     b.ToTable("Allergens");
                 });
@@ -64,10 +128,14 @@ namespace OnlineRestaurant.Database.Migrations
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Type")
+                        .IsUnique();
 
                     b.ToTable("FoodCategories");
                 });
@@ -112,38 +180,6 @@ namespace OnlineRestaurant.Database.Migrations
                     b.HasIndex("FoodCategoryId");
 
                     b.ToTable("Items");
-                });
-
-            modelBuilder.Entity("OnlineRestaurant.Database.Entities.ItemAllergen", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AllergenId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AllergenId");
-
-                    b.HasIndex("ItemId");
-
-                    b.ToTable("ItemsAllergens");
                 });
 
             modelBuilder.Entity("OnlineRestaurant.Database.Entities.ItemPicture", b =>
@@ -204,7 +240,7 @@ namespace OnlineRestaurant.Database.Migrations
                     b.ToTable("Menus");
                 });
 
-            modelBuilder.Entity("OnlineRestaurant.Database.Entities.MenuItem", b =>
+            modelBuilder.Entity("OnlineRestaurant.Database.Entities.MenuItemConfiguration", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -224,14 +260,11 @@ namespace OnlineRestaurant.Database.Migrations
                     b.Property<int>("MenuId")
                         .HasColumnType("int");
 
+                    b.Property<float?>("MenuPortionQuantity")
+                        .HasColumnType("real");
+
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("NumberOfPortions")
-                        .HasColumnType("int");
-
-                    b.Property<float>("PortionQuantity")
-                        .HasColumnType("real");
 
                     b.HasKey("Id");
 
@@ -239,7 +272,7 @@ namespace OnlineRestaurant.Database.Migrations
 
                     b.HasIndex("MenuId");
 
-                    b.ToTable("MenusItems");
+                    b.ToTable("MenuItemConfigurations");
                 });
 
             modelBuilder.Entity("OnlineRestaurant.Database.Entities.Order", b =>
@@ -270,70 +303,6 @@ namespace OnlineRestaurant.Database.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("OnlineRestaurant.Database.Entities.OrderItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ItemId");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("OrdersItems");
-                });
-
-            modelBuilder.Entity("OnlineRestaurant.Database.Entities.OrderMenu", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("MenuId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MenuId");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("OrdersMenus");
                 });
 
             modelBuilder.Entity("OnlineRestaurant.Database.Entities.User", b =>
@@ -388,7 +357,70 @@ namespace OnlineRestaurant.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("AllergenItem", b =>
+                {
+                    b.HasOne("OnlineRestaurant.Database.Entities.Allergen", null)
+                        .WithMany()
+                        .HasForeignKey("AllergensId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OnlineRestaurant.Database.Entities.Item", null)
+                        .WithMany()
+                        .HasForeignKey("ItemsId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ItemMenu", b =>
+                {
+                    b.HasOne("OnlineRestaurant.Database.Entities.Item", null)
+                        .WithMany()
+                        .HasForeignKey("ItemsId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OnlineRestaurant.Database.Entities.Menu", null)
+                        .WithMany()
+                        .HasForeignKey("MenusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ItemOrder", b =>
+                {
+                    b.HasOne("OnlineRestaurant.Database.Entities.Item", null)
+                        .WithMany()
+                        .HasForeignKey("ItemsId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OnlineRestaurant.Database.Entities.Order", null)
+                        .WithMany()
+                        .HasForeignKey("OrdersId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MenuOrder", b =>
+                {
+                    b.HasOne("OnlineRestaurant.Database.Entities.Menu", null)
+                        .WithMany()
+                        .HasForeignKey("MenusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OnlineRestaurant.Database.Entities.Order", null)
+                        .WithMany()
+                        .HasForeignKey("OrdersId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("OnlineRestaurant.Database.Entities.Item", b =>
@@ -400,25 +432,6 @@ namespace OnlineRestaurant.Database.Migrations
                         .IsRequired();
 
                     b.Navigation("FoodCategory");
-                });
-
-            modelBuilder.Entity("OnlineRestaurant.Database.Entities.ItemAllergen", b =>
-                {
-                    b.HasOne("OnlineRestaurant.Database.Entities.Allergen", "Allergen")
-                        .WithMany("ItemsAllergens")
-                        .HasForeignKey("AllergenId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("OnlineRestaurant.Database.Entities.Item", "Item")
-                        .WithMany("ItemsAllergens")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Allergen");
-
-                    b.Navigation("Item");
                 });
 
             modelBuilder.Entity("OnlineRestaurant.Database.Entities.ItemPicture", b =>
@@ -443,16 +456,16 @@ namespace OnlineRestaurant.Database.Migrations
                     b.Navigation("FoodCategory");
                 });
 
-            modelBuilder.Entity("OnlineRestaurant.Database.Entities.MenuItem", b =>
+            modelBuilder.Entity("OnlineRestaurant.Database.Entities.MenuItemConfiguration", b =>
                 {
                     b.HasOne("OnlineRestaurant.Database.Entities.Item", "Item")
-                        .WithMany("MenusItems")
+                        .WithMany("MenuConfigurations")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("OnlineRestaurant.Database.Entities.Menu", "Menu")
-                        .WithMany("MenusItems")
+                        .WithMany("ItemConfigurations")
                         .HasForeignKey("MenuId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -473,49 +486,6 @@ namespace OnlineRestaurant.Database.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("OnlineRestaurant.Database.Entities.OrderItem", b =>
-                {
-                    b.HasOne("OnlineRestaurant.Database.Entities.Item", "Item")
-                        .WithMany("OrdersItems")
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("OnlineRestaurant.Database.Entities.Order", "Order")
-                        .WithMany("OrdersItems")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Item");
-
-                    b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("OnlineRestaurant.Database.Entities.OrderMenu", b =>
-                {
-                    b.HasOne("OnlineRestaurant.Database.Entities.Menu", "Menu")
-                        .WithMany("OrdersMenus")
-                        .HasForeignKey("MenuId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("OnlineRestaurant.Database.Entities.Order", "Order")
-                        .WithMany("OrderMenus")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Menu");
-
-                    b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("OnlineRestaurant.Database.Entities.Allergen", b =>
-                {
-                    b.Navigation("ItemsAllergens");
-                });
-
             modelBuilder.Entity("OnlineRestaurant.Database.Entities.FoodCategory", b =>
                 {
                     b.Navigation("Items");
@@ -525,27 +495,14 @@ namespace OnlineRestaurant.Database.Migrations
 
             modelBuilder.Entity("OnlineRestaurant.Database.Entities.Item", b =>
                 {
-                    b.Navigation("ItemsAllergens");
-
-                    b.Navigation("MenusItems");
-
-                    b.Navigation("OrdersItems");
+                    b.Navigation("MenuConfigurations");
 
                     b.Navigation("Pictures");
                 });
 
             modelBuilder.Entity("OnlineRestaurant.Database.Entities.Menu", b =>
                 {
-                    b.Navigation("MenusItems");
-
-                    b.Navigation("OrdersMenus");
-                });
-
-            modelBuilder.Entity("OnlineRestaurant.Database.Entities.Order", b =>
-                {
-                    b.Navigation("OrderMenus");
-
-                    b.Navigation("OrdersItems");
+                    b.Navigation("ItemConfigurations");
                 });
 
             modelBuilder.Entity("OnlineRestaurant.Database.Entities.User", b =>

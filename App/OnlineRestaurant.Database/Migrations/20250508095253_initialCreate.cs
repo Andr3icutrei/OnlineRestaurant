@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OnlineRestaurant.Database.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class initialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -76,6 +76,8 @@ namespace OnlineRestaurant.Database.Migrations
                     PortionQuantity = table.Column<float>(type: "real", nullable: false),
                     TotalQuantity = table.Column<float>(type: "real", nullable: false),
                     FoodCategoryId = table.Column<int>(type: "int", nullable: false),
+                    AllergenId = table.Column<int>(type: "int", nullable: true),
+                    ItemId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -84,9 +86,21 @@ namespace OnlineRestaurant.Database.Migrations
                 {
                     table.PrimaryKey("PK_Items", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Items_Allergens_AllergenId",
+                        column: x => x.AllergenId,
+                        principalTable: "Allergens",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Items_FoodCategories_FoodCategoryId",
                         column: x => x.FoodCategoryId,
                         principalTable: "FoodCategories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Items_Items_ItemId",
+                        column: x => x.ItemId,
+                        principalTable: "Items",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -160,122 +174,86 @@ namespace OnlineRestaurant.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ItemsAllergens",
+                name: "ItemMenu",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AllergenId = table.Column<int>(type: "int", nullable: false),
-                    ItemId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ItemsId = table.Column<int>(type: "int", nullable: false),
+                    ItemsId1 = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ItemsAllergens", x => x.Id);
+                    table.PrimaryKey("PK_ItemMenu", x => new { x.ItemsId, x.ItemsId1 });
                     table.ForeignKey(
-                        name: "FK_ItemsAllergens_Allergens_AllergenId",
-                        column: x => x.AllergenId,
-                        principalTable: "Allergens",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ItemsAllergens_Items_ItemId",
-                        column: x => x.ItemId,
-                        principalTable: "Items",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MenusItems",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PortionQuantity = table.Column<float>(type: "real", nullable: false),
-                    NumberOfPortions = table.Column<int>(type: "int", nullable: false),
-                    MenuId = table.Column<int>(type: "int", nullable: false),
-                    ItemId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MenusItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_MenusItems_Items_ItemId",
-                        column: x => x.ItemId,
+                        name: "FK_ItemMenu_Items_ItemsId",
+                        column: x => x.ItemsId,
                         principalTable: "Items",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_MenusItems_Menus_MenuId",
-                        column: x => x.MenuId,
+                        name: "FK_ItemMenu_Menus_ItemsId1",
+                        column: x => x.ItemsId1,
                         principalTable: "Menus",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrdersItems",
+                name: "ItemOrder",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    OrderId = table.Column<int>(type: "int", nullable: false),
-                    ItemId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ItemsId = table.Column<int>(type: "int", nullable: false),
+                    OrdersId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrdersItems", x => x.Id);
+                    table.PrimaryKey("PK_ItemOrder", x => new { x.ItemsId, x.OrdersId });
                     table.ForeignKey(
-                        name: "FK_OrdersItems_Items_ItemId",
-                        column: x => x.ItemId,
+                        name: "FK_ItemOrder_Items_ItemsId",
+                        column: x => x.ItemsId,
                         principalTable: "Items",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_OrdersItems_Orders_OrderId",
-                        column: x => x.OrderId,
+                        name: "FK_ItemOrder_Orders_OrdersId",
+                        column: x => x.OrdersId,
                         principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrdersMenus",
+                name: "MenuOrder",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    OrderId = table.Column<int>(type: "int", nullable: false),
-                    MenuId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    MenusId = table.Column<int>(type: "int", nullable: false),
+                    OrdersId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrdersMenus", x => x.Id);
+                    table.PrimaryKey("PK_MenuOrder", x => new { x.MenusId, x.OrdersId });
                     table.ForeignKey(
-                        name: "FK_OrdersMenus_Menus_MenuId",
-                        column: x => x.MenuId,
+                        name: "FK_MenuOrder_Menus_MenusId",
+                        column: x => x.MenusId,
                         principalTable: "Menus",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_OrdersMenus_Orders_OrderId",
-                        column: x => x.OrderId,
+                        name: "FK_MenuOrder_Orders_OrdersId",
+                        column: x => x.OrdersId,
                         principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemMenu_ItemsId1",
+                table: "ItemMenu",
+                column: "ItemsId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemOrder_OrdersId",
+                table: "ItemOrder",
+                column: "OrdersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ItemPictures_ItemId",
@@ -283,19 +261,24 @@ namespace OnlineRestaurant.Database.Migrations
                 column: "ItemId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Items_AllergenId",
+                table: "Items",
+                column: "AllergenId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Items_FoodCategoryId",
                 table: "Items",
                 column: "FoodCategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ItemsAllergens_AllergenId",
-                table: "ItemsAllergens",
-                column: "AllergenId");
+                name: "IX_Items_ItemId",
+                table: "Items",
+                column: "ItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ItemsAllergens_ItemId",
-                table: "ItemsAllergens",
-                column: "ItemId");
+                name: "IX_MenuOrder_OrdersId",
+                table: "MenuOrder",
+                column: "OrdersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Menus_FoodCategoryId",
@@ -303,61 +286,31 @@ namespace OnlineRestaurant.Database.Migrations
                 column: "FoodCategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MenusItems_ItemId",
-                table: "MenusItems",
-                column: "ItemId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MenusItems_MenuId",
-                table: "MenusItems",
-                column: "MenuId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Orders_UserId",
                 table: "Orders",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrdersItems_ItemId",
-                table: "OrdersItems",
-                column: "ItemId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OrdersItems_OrderId",
-                table: "OrdersItems",
-                column: "OrderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OrdersMenus_MenuId",
-                table: "OrdersMenus",
-                column: "MenuId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OrdersMenus_OrderId",
-                table: "OrdersMenus",
-                column: "OrderId");
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ItemMenu");
+
+            migrationBuilder.DropTable(
+                name: "ItemOrder");
+
+            migrationBuilder.DropTable(
                 name: "ItemPictures");
 
             migrationBuilder.DropTable(
-                name: "ItemsAllergens");
-
-            migrationBuilder.DropTable(
-                name: "MenusItems");
-
-            migrationBuilder.DropTable(
-                name: "OrdersItems");
-
-            migrationBuilder.DropTable(
-                name: "OrdersMenus");
-
-            migrationBuilder.DropTable(
-                name: "Allergens");
+                name: "MenuOrder");
 
             migrationBuilder.DropTable(
                 name: "Items");
@@ -367,6 +320,9 @@ namespace OnlineRestaurant.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "Allergens");
 
             migrationBuilder.DropTable(
                 name: "FoodCategories");

@@ -29,9 +29,10 @@ namespace OnlineRestaurant.Database.Entities
         public FoodCategory FoodCategory { get; set; }
 
         // references
-        public ICollection<ItemAllergen> ItemsAllergens { get; set; }
+        public ICollection<Allergen> Allergens { get; set; }
         public ICollection<ItemPicture> Pictures { get; set; }
-        public ICollection<MenuItem> MenusItems { get; set; }
-        public ICollection<OrderItem> OrdersItems { get; set; }
+        public ICollection<Menu> Menus { get; set; }
+        public ICollection<Order> Orders { get; set; }
+        public ICollection<MenuItemConfiguration> MenuConfigurations { get; set; }
     }
 }

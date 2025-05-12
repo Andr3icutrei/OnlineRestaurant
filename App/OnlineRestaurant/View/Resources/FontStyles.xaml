@@ -1,0 +1,44 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Text Styles Matching the "Register" Font -->
+    <Style x:Key="PapasPizzeriaTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Comic Sans MS"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="Black"/>
+    </Style>
+
+    <!-- Small Text Style Variant -->
+    <Style x:Key="PapasPizzeriaSmallTextStyle" TargetType="TextBlock" 
+       BasedOn="{StaticResource PapasPizzeriaTextStyle}">
+    </Style>
+
+    <!-- Large Text Style Variant -->
+    <Style x:Key="PapasPizzeriaLargeTextStyle" TargetType="TextBlock" 
+       BasedOn="{StaticResource PapasPizzeriaTextStyle}">
+    </Style>
+
+    <!-- Header Text Style -->
+    <Style x:Key="PapasPizzeriaHeaderTextStyle" TargetType="TextBlock" 
+       BasedOn="{StaticResource PapasPizzeriaTextStyle}">
+        <Setter Property="FontWeight" Value="ExtraBold"/>
+    </Style>
+
+    <!-- Label Style (for use with Label controls) -->
+    <Style x:Key="PapasPizzeriaLabelStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="Comic Sans MS"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="Black"/>
+    </Style>
+
+    <!-- Text with Outline Effect Style -->
+    <Style x:Key="PapasPizzeriaOutlineTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Comic Sans MS"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="3" Color="White" Opacity="1"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
