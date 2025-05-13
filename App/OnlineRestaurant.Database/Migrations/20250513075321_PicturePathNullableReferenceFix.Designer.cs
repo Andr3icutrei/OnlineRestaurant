@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineRestaurant.Database.Context;
 
@@ -11,9 +12,11 @@ using OnlineRestaurant.Database.Context;
 namespace OnlineRestaurant.Database.Migrations
 {
     [DbContext(typeof(OnlineRestaurantDbContext))]
-    partial class OnlineRestaurantDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250513075321_PicturePathNullableReferenceFix")]
+    partial class PicturePathNullableReferenceFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -217,11 +220,6 @@ namespace OnlineRestaurant.Database.Migrations
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 

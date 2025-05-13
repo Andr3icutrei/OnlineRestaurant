@@ -4,6 +4,7 @@ using OnlineRestaurant.UI.Models;
 using OnlineRestaurant.UI.Services;
 using OnlineRestaurant.UI.View;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -73,6 +74,7 @@ namespace OnlineRestaurant.UI.ViewModel
         private readonly INavigationService _navigationService;
         private readonly IItemService _itemService;
         private readonly IAllergenService _allergenService;
+        private readonly IItemPictureService _itemPictureService;
 
         private FoodCategory _selectedFoodCategory;
         public FoodCategory SelectedFoodCategory
@@ -83,30 +85,6 @@ namespace OnlineRestaurant.UI.ViewModel
                 _selectedFoodCategory = value;
                 OnPropertyChanged(nameof(SelectedFoodCategory));
                 SelectedFoodCategoryIndex = FoodCategoryItems.IndexOf(value) + 1;
-            }
-        }
-
-        public IEnumerable<KeyValuePair<string, GridColumnDefinition>> GridColumnsItemPicture => _currentColumnsItemPictures;
-
-        private ObservableCollection<DataRowVM> _currentDataItemPictures;
-        public ObservableCollection<DataRowVM> CurrentDataItemPictures
-        {
-            get => _currentDataItemPictures;
-            set
-            {
-                _currentDataItemPictures = value;
-                OnPropertyChanged(nameof(CurrentDataItemPictures));
-            }
-        }
-        private Dictionary<string, GridColumnDefinition> _currentColumnsItemPictures;
-        public Dictionary<string, GridColumnDefinition> CurrentColumnsItemPictures
-        {
-            get => _currentColumnsItemPictures;
-            set
-            {
-                _currentColumnsItemPictures = value;
-                // This will trigger the UI to update the columns
-                OnPropertyChanged(nameof(CurrentColumnsItemPictures));
             }
         }
 
@@ -129,27 +107,96 @@ namespace OnlineRestaurant.UI.ViewModel
             set
             {
                 _currentColumnsAllergens = value;
-                // This will trigger the UI to update the columns
                 OnPropertyChanged(nameof(CurrentColumnsAllergens));
             }
         }
 
         public int SelectedFoodCategoryIndex { get; set; }
 
+        public IEnumerable<KeyValuePair<string, GridColumnDefinition>> GridColumnsItemPictures => _currentColumnsItemPictures;
+
+        private ObservableCollection<DataRowVM> _currentDataItemPictures;
+        public ObservableCollection<DataRowVM> CurrentDataItemPictures
+        {
+            get => _currentDataItemPictures;
+            set
+            {
+                _currentDataItemPictures = value;
+                OnPropertyChanged(nameof(CurrentDataItemPictures));
+            }
+        }
+        private Dictionary<string, GridColumnDefinition> _currentColumnsItemPictures;
+        public Dictionary<string, GridColumnDefinition> CurrentColumnsItemPictures
+        {
+            get => _currentColumnsItemPictures;
+            set
+            {
+                _currentColumnsItemPictures = value;
+                OnPropertyChanged(nameof(CurrentColumnsItemPictures));
+            }
+        }
+
+        private ObservableCollection<DataRowVM> _selectedItemPictures = new ObservableCollection<DataRowVM>();
+        public IList SelectedItemPictures
+        {
+            get => _selectedItemPictures;
+            set
+            {
+                if (value is ObservableCollection<DataRowVM> collection)
+                {
+                    _selectedItemPictures = collection;
+                }
+                else if (value != null)
+                {
+                    // Create a new collection with the items from the value
+                    _selectedItemPictures = new ObservableCollection<DataRowVM>(value.Cast<DataRowVM>());
+                }
+                else
+                {
+                    _selectedItemPictures = new ObservableCollection<DataRowVM>();
+                }
+                OnPropertyChanged(nameof(SelectedItemPictures));
+            }
+        }
+
+        private ObservableCollection<DataRowVM> _selectedAllergens = new ObservableCollection<DataRowVM>();
+        public IList SelectedAllergens
+        {
+            get => _selectedAllergens;
+            set
+            {
+                if (value is ObservableCollection<DataRowVM> collection)
+                {
+                    _selectedAllergens = collection;
+                }
+                else if (value != null)
+                {
+                    _selectedAllergens = new ObservableCollection<DataRowVM>(value.Cast<DataRowVM>());
+                }
+                else
+                {
+                    _selectedAllergens = new ObservableCollection<DataRowVM>();
+                }
+
+                OnPropertyChanged(nameof(SelectedAllergens));
+            }
+        }
+
         public ICommand AddItemCommand { get; }
         public ICommand CancelCommand { get; }
 
         public AddItemVM(INavigationService navigationService,IItemService itemService,IFoodCategoryService categoryService,
-            IAllergenService allergenService)
+            IAllergenService allergenService,IItemPictureService itemPictureService)
         {
             _navigationService = navigationService;
             _itemService = itemService;
             _allergenService = allergenService;
-
+            _itemPictureService = itemPictureService;
             AddItemCommand = new RelayCommand(AddItem_Execute, AddItem_CanExecute);
             CancelCommand = new RelayCommand(Cancel_Execute);
 
             FoodCategoryItems = new ObservableCollection<FoodCategory>(categoryService.GetAll());
+
             LoadItemPictures();
             LoadAllergens();
         }
@@ -159,14 +206,17 @@ namespace OnlineRestaurant.UI.ViewModel
             _currentColumnsItemPictures = new Dictionary<string, GridColumnDefinition>()
             {
                 ["Id"] = new GridColumnDefinition("Picture Id", "Id", typeof(int)),
-                ["PicturePath"] = new GridColumnDefinition("Picture path", "PicturePath", typeof(string))
+                ["PicturePath"] = new GridColumnDefinition("Picture Type", "PicturePath", typeof(string))
             };
 
             CurrentDataItemPictures = new ObservableCollection<DataRowVM>();
-            var item1 = new ItemPicture { Id = 1, PicturePath = "path/to/image1.jpg" };
-            var item2 = new ItemPicture { Id = 2, PicturePath = "path/to/image2.jpg" };
-            CurrentDataItemPictures.Add(new DataRowVM(item1, CurrentColumnsItemPictures));
-            CurrentDataItemPictures.Add(new DataRowVM(item2, CurrentColumnsItemPictures));
+
+            List<ItemPicture> itemPictures = _itemPictureService.GetAll();
+
+            foreach (var itemPicture in itemPictures)
+            {
+                CurrentDataItemPictures.Add(new DataRowVM((itemPicture), CurrentColumnsItemPictures));
+            }
         }
 
         public void LoadAllergens()
@@ -187,7 +237,6 @@ namespace OnlineRestaurant.UI.ViewModel
             }
         }
 
-
         public async void AddItem_Execute()
         {
             try
@@ -198,9 +247,25 @@ namespace OnlineRestaurant.UI.ViewModel
                     Price = decimal.Parse(PriceText),
                     PortionQuantity = float.Parse(PortionQuantityText),
                     TotalQuantity = float.Parse(TotalQuantityText),
-                    FoodCategoryId = SelectedFoodCategoryIndex
+                    FoodCategoryId = SelectedFoodCategoryIndex,
+                    Allergens = new List<Allergen>(),
+                    Pictures = new List<ItemPicture>() 
                 };
+                
+                foreach(DataRowVM allergen in _selectedAllergens)
+                {
+                    i.Allergens.Add(allergen.GetOriginalData<Allergen>());
+                }
+
                 await _itemService.AddItemAsync(i);
+
+                foreach (DataRowVM itemPicture in _selectedItemPictures)
+                {
+                    ItemPicture ip = itemPicture.GetOriginalData<ItemPicture>();
+                    ip.ItemId = i.Id;
+                    _itemPictureService.UpdateItemPicture(ip);
+                    await _itemPictureService.SaveChangesAsync();
+                }
             } 
             catch (FormatException e)
             {

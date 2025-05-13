@@ -12,7 +12,7 @@ namespace OnlineRestaurant.Database.Repositories
     public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     {
         protected readonly OnlineRestaurantDbContext _databaseContext;
-        private DbSet<T> DbSet { get; }
+        public DbSet<T> DbSet { get; }
 
         public BaseRepository(OnlineRestaurantDbContext databaseContext)
         {
@@ -69,7 +69,7 @@ namespace OnlineRestaurant.Database.Repositories
             var result = DbSet.AsQueryable();
             if (includeDeletedEntities is false)
             {
-                result = result.Where(r => r.DeletedAt == null);
+                result = result.Where(r => r.DeletedAt == null).OrderBy(r => r.Id);
             }
             return result;
         }

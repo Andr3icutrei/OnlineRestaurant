@@ -4,10 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OnlineRestaurant.UI.View"
+        xmlns:extensions="clr-namespace:OnlineRestaurant.UI.Extensions"
         xmlns:converters="clr-namespace:OnlineRestaurant.UI.Converters"
         mc:Ignorable="d"
-        Title="AddItemWindow" Height="550" Width="1000">
-
+        Title="AddItemWindow" Height="550" Width="1000"
+        WindowStyle="None">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -16,10 +17,10 @@
                 <ResourceDictionary Source="/View/Resources/Background.xaml"/>
                 <ResourceDictionary Source="/View/Resources/FontStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-
             <converters:DynamicPropertyConverter x:Key="DynamicPropertyConverter"/>
         </ResourceDictionary>
     </Window.Resources>
+
     <Grid Style="{StaticResource PapasPizzeriaBackground}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -88,8 +89,8 @@
 
         <Grid Grid.Column="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="364*"/>
+                <ColumnDefinition Width="271*"/>
             </Grid.ColumnDefinitions>
 
             <DataGrid Grid.Column="0"
@@ -98,9 +99,44 @@
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
                   IsReadOnly="True"
-                  Margin="20"
-                  CanUserResizeColumns="True"
-                  ColumnWidth="SizeToCells">
+                  Margin="20,20,20,20"
+                  ColumnWidth="155"
+                  SelectionMode="Extended"
+                  SelectionUnit="FullRow"
+                  extensions:DataGridExtension.SelectedItems="{Binding SelectedItemPictures,Mode=TwoWay}">
+                <DataGrid.Resources>
+                    <!-- Override the default cell style to remove blue selection highlight -->
+                    <Style TargetType="{x:Type DataGridCell}">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, Path=Foreground}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Resources>
+                <DataGrid.RowStyle>
+                    <Style TargetType="{x:Type DataGridRow}">
+                        <!-- Default values when not selected -->
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Background" Value="#FF4040"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                            </Trigger>
+                            <!-- Remove the focus visual style -->
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
             </DataGrid>
 
             <DataGrid Grid.Column="1" x:Name="DynamicGridAllergens"
@@ -108,11 +144,46 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 IsReadOnly="True"
-                Margin="20"
-                CanUserResizeColumns="True"
-                ColumnWidth="SizeToCells">
+                Margin="20,20,20,20"
+                ColumnWidth="120"
+                SelectionMode="Extended"
+                SelectionUnit="FullRow"
+                extensions:DataGridExtension.SelectedItems="{Binding SelectedAllergens,Mode=TwoWay}">
+                <DataGrid.Resources>
+                    <!-- Override the default cell style to remove blue selection highlight -->
+                    <Style TargetType="{x:Type DataGridCell}">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, Path=Foreground}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Resources>
+                <DataGrid.RowStyle>
+                    <Style TargetType="{x:Type DataGridRow}">
+                        <!-- Default values when not selected -->
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Background" Value="#FF4040"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                            </Trigger>
+                            <!-- Remove the focus visual style -->
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
             </DataGrid>
         </Grid>
-        
+
     </Grid>
 </Window>

@@ -11,15 +11,15 @@ namespace OnlineRestaurant.UI.ViewModel
 {
     public class DataRowVM
     {
-        private readonly object _data;        // The actual object (Customer, Product, etc.)
+        public readonly object _data;        // The actual object (Customer, Product, etc.)
         private readonly string _type;        // Type identifier ("Customer", "Product")
-        private readonly Dictionary<string, GridColumnDefinition> _columns;  // Column definitions
+        public readonly Dictionary<string, GridColumnDefinition> Columns; // Column definitions
 
         public DataRowVM(object data, Dictionary<string, GridColumnDefinition> columns)
         {
             _data = data ?? throw new ArgumentNullException(nameof(data));
             _type = data.GetType().Name;
-            _columns = columns;
+            Columns = columns;
         }
 
         // Main method to get property values - uses reflection
@@ -27,7 +27,7 @@ namespace OnlineRestaurant.UI.ViewModel
         {
             if (_data == null) return default;
 
-            if (!_columns.TryGetValue(columnKey, out var columnDef))
+            if (!Columns.TryGetValue(columnKey, out var columnDef))
                 return default;
 
             if (string.IsNullOrEmpty(columnDef.PropertyPath))

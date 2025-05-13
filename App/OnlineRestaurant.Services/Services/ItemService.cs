@@ -22,5 +22,10 @@ namespace OnlineRestaurant.Core.Services
             _repository.Insert(item);
             await _repository.SaveChangesAsync();
         }
+
+        public IEnumerable<Item> GetAll()
+        {
+            return _repository.GetAll();
+        }
     }
 }

@@ -53,6 +53,7 @@ namespace OnlineRestaurant
             services.AddScoped<IAllergenRepository, AllergenRepository>();
             services.AddScoped<IFoodCategoryRepository, FoodCategoryRepository>();
             services.AddScoped<IItemRepository,  ItemRepository>();
+            services.AddScoped<IItemPictureRepository, ItemPictureRepository>();
 
             // Register services
             services.AddScoped<IUserService, UserService>();
@@ -60,6 +61,7 @@ namespace OnlineRestaurant
             services.AddScoped<IAllergenService, AllergenService>();
             services.AddScoped<IFoodCategoryService, FoodCategoryService>();
             services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<IItemPictureService, ItemPictureService>();
 
             // Register navigation service
             services.AddSingleton<INavigationService, NavigationService>();
@@ -71,6 +73,7 @@ namespace OnlineRestaurant
             services.AddTransient<AddFoodCategoryVM>();
             services.AddTransient<AddAllergenVM>();
             services.AddTransient<AddItemVM>();
+            services.AddTransient<AddMenuVM>();
 
             services.AddTransient<StartupWindow>(provider =>
                 new StartupWindow { DataContext = provider.GetRequiredService<StartupWindowVM>() });
@@ -89,6 +92,9 @@ namespace OnlineRestaurant
 
             services.AddTransient<AddItemWindow>(provider =>
                 new AddItemWindow { DataContext = provider.GetRequiredService<AddItemVM>() });
+
+            services.AddTransient<AddMenuWindow>(provider => 
+                new AddMenuWindow { DataContext = provider.GetRequiredService<AddMenuVM>() });
         }
 
         private void Current_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

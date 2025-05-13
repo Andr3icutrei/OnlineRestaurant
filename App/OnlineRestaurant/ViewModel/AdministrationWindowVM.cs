@@ -96,6 +96,8 @@ namespace OnlineRestaurant.UI.ViewModel
                 _navigationService.NavigateTo<AddAllergenWindow>();
             else if (InsertSelectedItem == "Items")
                 _navigationService.NavigateTo<AddItemWindow>();
+            else
+                _navigationService.NavigateTo<AddMenuWindow>();
         }
 
         public void Delete_Execute()

@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace OnlineRestaurant.Core.Services
 {
-    public interface IItemService 
+    public interface IItemPictureService
     {
-        Task AddItemAsync(Item item);
-        IEnumerable<Item> GetAll();
+        List<ItemPicture> GetAll();
+        void UpdateItemPicture(ItemPicture itemPicture);
+        Task SaveChangesAsync();
     }
 }

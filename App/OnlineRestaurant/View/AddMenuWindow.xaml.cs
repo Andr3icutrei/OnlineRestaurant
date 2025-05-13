@@ -22,44 +22,35 @@ using System.Windows.Shapes;
 namespace OnlineRestaurant.UI.View
 {
     /// <summary>
-    /// Interaction logic for AddItemWindow.xaml
+    /// Interaction logic for AddMenuWindow.xaml
     /// </summary>
-    public partial class AddItemWindow : Window
+    public partial class AddMenuWindow : Window
     {
-        private AddItemVM _viewModel;
-        public AddItemWindow()
+        private readonly AddMenuVM _viewModel;
+        public AddMenuWindow()
         {
             InitializeComponent();
 
             var serviceProvider = ((App)Application.Current).HostInstance.Services;
             var navigationService = serviceProvider.GetRequiredService<INavigationService>();
-            var foodCategoryService = serviceProvider.GetRequiredService<IFoodCategoryService>();
             var itemService = serviceProvider.GetRequiredService<IItemService>();
-            var allergenService = serviceProvider.GetRequiredService<IAllergenService>();
-            var itemPictureService = serviceProvider.GetRequiredService<IItemPictureService>();
+            var foodCategoryService = serviceProvider.GetRequiredService<IFoodCategoryService>();
 
-            _viewModel = new AddItemVM(navigationService, itemService, foodCategoryService, allergenService, itemPictureService);
+            _viewModel = new AddMenuVM(navigationService, itemService, foodCategoryService);
             DataContext = _viewModel;
 
-            _viewModel.PropertyChanged += ViewModel_PropertyChanged;
-
-            UpdateGridColumns(DynamicGridAllergens, _viewModel.GridColumnsAllergens);
-            UpdateGridColumns(DynamicGridItemPictures, _viewModel.GridColumnsItemPictures);
+            UpdateGridColumns(DynamicGridItems, _viewModel.GridColumnsItems);
         }
 
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(_viewModel.GridColumnsAllergens))
+            if (e.PropertyName == nameof(_viewModel.GridColumnsItems))
             {
-                UpdateGridColumns(DynamicGridAllergens, _viewModel.GridColumnsAllergens);
-            }
-            else if (e.PropertyName == nameof(_viewModel.GridColumnsItemPictures)) ;
-            {
-                UpdateGridColumns(DynamicGridItemPictures, _viewModel.GridColumnsItemPictures);
+                UpdateGridColumns(DynamicGridItems, _viewModel.GridColumnsItems);
             }
         }
 
-        private void UpdateGridColumns(DataGrid grid,IEnumerable<KeyValuePair<string,Models.GridColumnDefinition>> gridColumns)
+        private void UpdateGridColumns(DataGrid grid, Dictionary<string, GridColumnDefinition> gridColumns)
         {
             grid.Columns.Clear();
 

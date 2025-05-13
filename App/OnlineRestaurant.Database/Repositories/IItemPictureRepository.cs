@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnlineRestaurant.Core.Services
+namespace OnlineRestaurant.Database.Repositories
 {
-    public interface IItemService 
+    public interface IItemPictureRepository : IBaseRepository<ItemPicture>
     {
-        Task AddItemAsync(Item item);
-        IEnumerable<Item> GetAll();
+        List<ItemPicture> GetAll();
     }
 }
