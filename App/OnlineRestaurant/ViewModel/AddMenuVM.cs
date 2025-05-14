@@ -22,11 +22,14 @@ namespace OnlineRestaurant.UI.ViewModel
         private readonly INavigationService _navigationService;
         private readonly IFoodCategoryService _foodCategoryService;
         private readonly IItemService _itemService;
+        private readonly IMenuService _menuService;
+        private readonly IMenuItemConfigurationService _menuItemConfigurationService;
 
         public string MenuNameText { get; set; }
         public string MenuPortionQuantityText { get; set; }
 
         public ObservableCollection<FoodCategory> FoodCategoryItems { get; set; }
+        public int SelectedFoodCategoryIndex { get; set; } = -1;
         private FoodCategory _selectedFoodCategory;
         public FoodCategory SelectedFoodCategory
         {
@@ -38,13 +41,12 @@ namespace OnlineRestaurant.UI.ViewModel
                 SelectedFoodCategoryIndex = FoodCategoryItems.IndexOf(value) + 1;
             }
         }
-        public int SelectedFoodCategoryIndex { get; set; }
-        public Dictionary<string, GridColumnDefinition> GridColumnsItems => _currentColumnsItems;
+        public IEnumerable<KeyValuePair<string, GridColumnDefinition>> GridColumnsItems => _currentColumnsItems;
 
         private Dictionary<string, GridColumnDefinition> _currentColumnsItems;
         public ObservableCollection<DataRowVM> CurrentDataItems { get;set; }
 
-        private ObservableCollection<DataRowVM> _selectedItems;
+        private ObservableCollection<DataRowVM> _selectedItems = new ObservableCollection<DataRowVM>();
         public IList SelectedItems
         {
             get => _selectedItems;
@@ -56,7 +58,6 @@ namespace OnlineRestaurant.UI.ViewModel
                 }
                 else if (value != null)
                 {
-                    // Create a new collection with the items from the value
                     _selectedItems = new ObservableCollection<DataRowVM>(value.Cast<DataRowVM>());
                 }
                 else
@@ -72,8 +73,11 @@ namespace OnlineRestaurant.UI.ViewModel
         public ICommand AddMenuCommand { get; set; }
         public ICommand CancelCommand { get; set; }
 
-        public AddMenuVM(INavigationService navigationService,IItemService itemService,IFoodCategoryService foodCategoryService)
+        public AddMenuVM(INavigationService navigationService,IItemService itemService,IFoodCategoryService foodCategoryService,
+            IMenuService menuService,IMenuItemConfigurationService menuItemConfigurationService)
         {
+            _menuItemConfigurationService = menuItemConfigurationService;
+            _menuService = menuService;
             _foodCategoryService = foodCategoryService;
             _navigationService = navigationService;
             _itemService = itemService;
@@ -109,14 +113,51 @@ namespace OnlineRestaurant.UI.ViewModel
             }
         }
 
-        public void AddMenu_Execute()
+        public async void AddMenu_Execute()
         {
-            
+            WindowService ws = new WindowService();
+            List<Item> items = new List<Item>();
+            for(int i = 0; i < _selectedItems.Count; i++)
+            {
+                items.Add(_selectedItems[i].GetOriginalData<Item>());
+            }
+
+            ws.ShowVariableTextBoxesWindow(
+            items,
+            this,
+            async (vm, wasConfirmed) =>
+                {
+                if(!wasConfirmed)
+                    return;
+
+                var viewModel = (VariableTextBoxesVM)vm;
+
+                Database.Entities.Menu menu = new Database.Entities.Menu
+                {
+                    Name = MenuNameText,
+                    FoodCategoryId = SelectedFoodCategoryIndex
+                };
+
+                await _menuService.AddMenuAsync(menu); 
+
+                for(int i = 0; i < viewModel.TextFieldItems.Count; i++)
+                {
+                    MenuItemConfiguration menuItemConfiguration = new MenuItemConfiguration()
+                    {
+                        ItemId = _selectedItems[i].GetOriginalData<Item>().Id,
+                        MenuId = menu.Id,
+                        MenuPortionQuantity = float.Parse(viewModel.TextFieldItems[i].Value)
+                    };
+                    await _menuItemConfigurationService.AddMenuItemConfigurationAsync(menuItemConfiguration);
+                }
+            }
+        );
         }
 
         public bool AddMenu_CanExecute()
         {
-            return true;
+            return MenuNameText != string.Empty && MenuPortionQuantityText != string.Empty &&
+                SelectedFoodCategoryIndex != -1;
         }
 
         public void Cancel_Execute() 

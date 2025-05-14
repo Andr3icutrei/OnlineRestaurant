@@ -1,0 +1,52 @@
+﻿<Window x:Class="OnlineRestaurant.UI.View.VariableTextBoxesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OnlineRestaurant.UI.View"
+        xmlns:vm="clr-namespace:OnlineRestaurant.UI.ViewModel"
+        mc:Ignorable="d"
+        Height="400" Width="300">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/View/Resources/PapasButtonStyle.xaml"/>
+                <ResourceDictionary Source="/View/Resources/Background.xaml"/>
+                <ResourceDictionary Source="/View/Resources/FontStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Style="{StaticResource PapasPizzeriaBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Style="{StaticResource PapasPizzeriaLabelStyle}" Grid.ColumnSpan="2">
+            <TextBlock>
+                Choose desired food 
+                <LineBreak/>
+                quantity for items:
+            </TextBlock>
+        </Label>
+
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding TextFieldItems}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                        <Label Content="{Binding LabelText}" Width="100" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         Width="200" Margin="0,0,10,0"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <Button Style="{StaticResource PepperoniButtonStyle}" Grid.Row="2" Content="Confirm quantities" Command="{Binding ConfirmQuantitiesCommand}" Width="150" Margin="10"/>
+        <Button Style="{StaticResource PizzaButtonStyle}" Grid.Row="3" Content="Cancel" Command="{Binding CancelCommand}" Height="40" Width="100" Margin="10"/>
+    </Grid>
+</Window>

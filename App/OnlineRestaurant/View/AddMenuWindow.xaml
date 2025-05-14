@@ -6,7 +6,7 @@
         xmlns:extensions="clr-namespace:OnlineRestaurant.UI.Extensions"
         xmlns:converters="clr-namespace:OnlineRestaurant.UI.Converters"
         mc:Ignorable="d"
-        Title="AddItemWindow" Height="550" Width="1000"
+        Title="AddItemWindow" Height="450" Width="800"
         WindowStyle="None">
     <Window.Resources>
         <ResourceDictionary>
@@ -34,10 +34,6 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="Auto"/>
-                <!--menu portion quantity-->
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="Auto"/>
                 <!--food category-->
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="30"/>
@@ -58,13 +54,10 @@
             <Label Grid.Row="2" Content="Menu Name:" FontSize="20" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
             <TextBox Grid.Row="4" Text="{Binding MenuNameText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="245" Height="20" HorizontalAlignment="Left" Margin="5"/>
 
-            <Label Grid.Row="5" Content="Menu Portion quantity:" FontSize="20" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
-            <TextBox Grid.Row="7" Text="{Binding MenuPortionQuantityText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBox_Pasting" Width="195" Height="20" HorizontalAlignment="Left" Margin="5"/>
+            <Label Grid.Row="6" Content="Food category:" FontSize="20" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
+            <ComboBox Grid.Row="8" ItemsSource="{Binding FoodCategoryItems}" DisplayMemberPath="Type" SelectedItem="{Binding SelectedFoodCategory}" SelectedIndex="{Binding SelectedFoodCategoryIndex}" Width="195" HorizontalAlignment="Left" Margin="5"/>
 
-            <Label Grid.Row="8" Content="Food category:" FontSize="20" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
-            <ComboBox Grid.Row="10" ItemsSource="{Binding FoodCategoryItems}" DisplayMemberPath="Type" SelectedItem="{Binding SelectedFoodCategory}" SelectedIndex="{Binding SelectedFoodCategoryIndex}" Width="195" HorizontalAlignment="Left" Margin="5"/>
-
-            <Grid Grid.Row="13">
+            <Grid Grid.Row="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -102,6 +95,24 @@
                         </Style.Triggers>
                     </Style>
                 </DataGrid.Resources>
+                <DataGrid.RowStyle>
+                    <Style TargetType="{x:Type DataGridRow}">
+                        <!-- Default values when not selected -->
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Background" Value="#FF4040"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                            </Trigger>
+                            <!-- Remove the focus visual style -->
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
             </DataGrid>
         </Grid>
     </Grid>

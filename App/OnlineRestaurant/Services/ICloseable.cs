@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace OnlineRestaurant.UI.Services
 {
-    public interface INavigationService
+    public interface ICloseable
     {
-        void NavigateTo<T>(bool close = true) where T : Window;
+        Action RequestClose { get; set; }
     }
 }

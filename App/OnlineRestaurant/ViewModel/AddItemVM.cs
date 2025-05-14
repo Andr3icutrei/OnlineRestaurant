@@ -192,6 +192,7 @@ namespace OnlineRestaurant.UI.ViewModel
             _itemService = itemService;
             _allergenService = allergenService;
             _itemPictureService = itemPictureService;
+
             AddItemCommand = new RelayCommand(AddItem_Execute, AddItem_CanExecute);
             CancelCommand = new RelayCommand(Cancel_Execute);
 

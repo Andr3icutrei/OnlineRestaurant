@@ -18,13 +18,13 @@ namespace OnlineRestaurant.UI.Services
             _serviceProvider = serviceProvider;
         }
 
-        public void NavigateTo<T>() where T : Window
+        public void NavigateTo<T>(bool close = true) where T : Window
         {
             var window = _serviceProvider.GetRequiredService<T>();
             window.Show();
 
             // Close the current window
-            if (Application.Current.MainWindow != null && Application.Current.MainWindow.IsLoaded)
+            if (close && Application.Current.MainWindow != null && Application.Current.MainWindow.IsLoaded)
             {
                 Application.Current.MainWindow.Close();
             }

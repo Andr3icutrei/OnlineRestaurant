@@ -54,6 +54,7 @@ namespace OnlineRestaurant
             services.AddScoped<IFoodCategoryRepository, FoodCategoryRepository>();
             services.AddScoped<IItemRepository,  ItemRepository>();
             services.AddScoped<IItemPictureRepository, ItemPictureRepository>();
+            services.AddScoped<IMenuItemConfigurationRepository, MenuItemConfigurationRepository>();
 
             // Register services
             services.AddScoped<IUserService, UserService>();
@@ -62,6 +63,7 @@ namespace OnlineRestaurant
             services.AddScoped<IFoodCategoryService, FoodCategoryService>();
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IItemPictureService, ItemPictureService>();
+            services.AddScoped<IMenuItemConfigurationService, MenuItemConfigurationService>();
 
             // Register navigation service
             services.AddSingleton<INavigationService, NavigationService>();
@@ -74,6 +76,7 @@ namespace OnlineRestaurant
             services.AddTransient<AddAllergenVM>();
             services.AddTransient<AddItemVM>();
             services.AddTransient<AddMenuVM>();
+            services.AddTransient<VariableTextBoxesVM>();
 
             services.AddTransient<StartupWindow>(provider =>
                 new StartupWindow { DataContext = provider.GetRequiredService<StartupWindowVM>() });

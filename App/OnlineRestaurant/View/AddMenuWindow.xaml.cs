@@ -35,8 +35,10 @@ namespace OnlineRestaurant.UI.View
             var navigationService = serviceProvider.GetRequiredService<INavigationService>();
             var itemService = serviceProvider.GetRequiredService<IItemService>();
             var foodCategoryService = serviceProvider.GetRequiredService<IFoodCategoryService>();
+            var menuService = serviceProvider.GetRequiredService<IMenuService>();
+            var menuItemConfigurationService = serviceProvider.GetRequiredService<IMenuItemConfigurationService>();
 
-            _viewModel = new AddMenuVM(navigationService, itemService, foodCategoryService);
+            _viewModel = new AddMenuVM(navigationService, itemService, foodCategoryService, menuService, menuItemConfigurationService);
             DataContext = _viewModel;
 
             UpdateGridColumns(DynamicGridItems, _viewModel.GridColumnsItems);
@@ -50,7 +52,7 @@ namespace OnlineRestaurant.UI.View
             }
         }
 
-        private void UpdateGridColumns(DataGrid grid, Dictionary<string, GridColumnDefinition> gridColumns)
+        private void UpdateGridColumns(DataGrid grid, IEnumerable<KeyValuePair<string, GridColumnDefinition>> gridColumns)
         {
             grid.Columns.Clear();
 
