@@ -12,8 +12,8 @@ namespace OnlineRestaurant.Database.Entities
         public OrderState State { get; set; }
         
         // foreign keys 
-        public int UserId { get; set; }
-        public User User { get; set; }
+        public int? UserId { get; set; }
+        public User? User { get; set; }
 
         // references
         public ICollection<Item> Items { get; set; }

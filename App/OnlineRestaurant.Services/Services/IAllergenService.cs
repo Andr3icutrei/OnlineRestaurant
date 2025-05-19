@@ -12,5 +12,8 @@ namespace OnlineRestaurant.Core.Services
         Task AddAllergenAsync(Allergen allergen);
         Task<bool> IsTypeUniqueAsync(Allergen allergen);
         IEnumerable<Allergen> GetAll();
+        Task<IEnumerable<Allergen>> GetAllAsync();
+        Task DeleteAsync(int id);
+        Task Update(Allergen allergen);
     }
 }

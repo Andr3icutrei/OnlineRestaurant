@@ -111,18 +111,18 @@ namespace OnlineRestaurant.UI.ViewModel
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
             _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
 
-            CreateAccountCommand = new RelayCommand(CreateAccount_Execute, CreateAccount_CanExecute);
+            CreateAccountCommand = new AsyncRelayCommand(CreateAccount_Execute, CreateAccount_CanExecute);
             CancelCommand = new RelayCommand(Cancel_Execute);
         }
 
-        public async void CreateAccount_Execute()
+        public async Task CreateAccount_Execute()
         {
             try
             {
                 if (string.IsNullOrEmpty(FirstNameText) || string.IsNullOrEmpty(LastNameText) ||
                     string.IsNullOrEmpty(EmailText) || string.IsNullOrEmpty(PasswordText))
                 {
-                    MessageBox.Show("Please fill all required fields.");
+                    MessageBox.Show("Please fill all required fields.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
@@ -140,8 +140,7 @@ namespace OnlineRestaurant.UI.ViewModel
                 await _userService.AddUserAsync(newUser);
 
                 ClearTextBoxes();
-
-                _navigationService.NavigateTo<StartupWindow>();
+                MessageBox.Show("User account Created!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (DbUpdateException dbEx)
             {

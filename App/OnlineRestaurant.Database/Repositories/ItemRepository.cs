@@ -1,4 +1,5 @@
-﻿using OnlineRestaurant.Database.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using OnlineRestaurant.Database.Context;
 using OnlineRestaurant.Database.Entities;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,12 @@ namespace OnlineRestaurant.Database.Repositories
         public ItemRepository(OnlineRestaurantDbContext context) : base(context) 
         {
             
+        }
+
+        public async Task<Item?> GetItemWithReferencesAsync(int id)
+        {
+            return await _databaseContext.Items.Include(i => i.Pictures).Include(i => i.Allergens).Include(i => i.FoodCategory).
+                FirstOrDefaultAsync(i => i.Id == id);
         }
     }
 }

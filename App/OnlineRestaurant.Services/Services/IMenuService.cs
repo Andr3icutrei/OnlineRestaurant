@@ -10,5 +10,10 @@ namespace OnlineRestaurant.Core.Services
     public interface IMenuService
     {
         Task AddMenuAsync(Menu menu);
+        Task<IEnumerable<Menu>> GetAllAsync();
+        Task DeleteAsync(int id);
+        Task<IEnumerable<Item?>> GetItemsForMenuAsync(int id);
+        Task UpdateAsync(Menu menu);
+        Task<Menu?> GetMenuWithReferencesAsync(int id);
     }
 }

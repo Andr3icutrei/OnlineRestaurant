@@ -1,4 +1,5 @@
-﻿using OnlineRestaurant.Core.Services;
+﻿using Microsoft.Extensions.DependencyInjection;
+using OnlineRestaurant.Core.Services;
 using OnlineRestaurant.Database.Entities;
 using OnlineRestaurant.UI.Services;
 using OnlineRestaurant.UI.ViewModel;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,23 +17,32 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace OnlineRestaurant.UI.View
 {
     /// <summary>
-    /// Interaction logic for RegisterWindow.xaml
+    /// Interaction logic for AddAllergenWindow.xaml
     /// </summary>
-    public partial class RegisterWindow : Window
+    public partial class UpsertAllergenWindow : Window, INavigationAware
     {
-        public RegisterWindow()
+        private UpsertAllergenVM _vm;
+        public UpsertAllergenWindow()
         {
             InitializeComponent();
 
             var serviceProvider = ((App)Application.Current).HostInstance.Services;
+            var vm = serviceProvider.GetRequiredService<UpsertAllergenVM>();
 
-            DataContext = serviceProvider.GetRequiredService<RegisterWindowVM>();  
+            _vm = vm;
+            DataContext = _vm;
+        }
+
+        public void OnNavigatedTo(object parameter)
+        {
+            if(parameter is Allergen allergen)
+            {
+                _vm.AllergenToModify = allergen;
+            }
         }
     }
 }

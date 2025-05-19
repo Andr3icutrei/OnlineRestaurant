@@ -25,13 +25,13 @@ namespace OnlineRestaurant.Database.Entities
         public float TotalQuantity { get; set; }
 
         // foreign keys
-        public int FoodCategoryId { get; set; }
-        public FoodCategory FoodCategory { get; set; }
+        public int? FoodCategoryId { get; set; }
+        public FoodCategory? FoodCategory { get; set; }
 
         // references
-        public ICollection<Allergen> Allergens { get; set; }
-        public ICollection<ItemPicture> Pictures { get; set; }
-        public ICollection<Order> Orders { get; set; }
-        public ICollection<MenuItemConfiguration> MenuConfigurations { get; set; }
+        public ICollection<Allergen> Allergens { get; set; } = new List<Allergen>();
+        public ICollection<ItemPicture> Pictures { get; set; } = new List<ItemPicture>();
+        public ICollection<Order> Orders { get; set; } = new List<Order>();
+        public ICollection<MenuItemConfiguration> MenuConfigurations { get; set; } = new List<MenuItemConfiguration>();
     }
 }

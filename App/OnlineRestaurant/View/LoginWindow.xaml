@@ -1,0 +1,62 @@
+﻿<Window x:Class="OnlineRestaurant.UI.View.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OnlineRestaurant.UI.View"
+        mc:Ignorable="d"
+        Title="LoginWindow" Height="450" Width="300">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/View/Resources/PapasButtonStyle.xaml"/>
+                <ResourceDictionary Source="/View/Resources/Background.xaml"/>
+                <ResourceDictionary Source="/View/Resources/FontStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    
+    
+    <Grid Style="{StaticResource PizzaContentPanelStyle}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Content="Log into your user account:" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
+        <Label Grid.Row="2" Content="Email:" Style="{StaticResource PapasPizzeriaLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+        <TextBox Grid.Row="3" Text="{Binding EmailText}" Margin="5" Width="150" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+        
+        <Label Grid.Row="5" Content="Password:" Style="{StaticResource PapasPizzeriaLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+        <TextBox Grid.Row="6" Text="{Binding PasswordText}" Margin="5" Width="150" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+
+        <Grid Grid.Row="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <RadioButton Grid.Column="0" Content="Admin" IsChecked="{Binding IsAdminChecked}" Style="{StaticResource PapasPizzeriaRadioButtonStyle}"/>
+            <RadioButton Grid.Column="1" Content="Regular user" IsChecked="{Binding IsUserChecked}" Style="{StaticResource PapasPizzeriaRadioButtonStyle}"/>
+        </Grid>
+        
+        <Grid Grid.Row="9">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Content="Login" Style="{StaticResource PepperoniButtonStyle}" Command="{Binding LoginCommand}" Width="60" VerticalAlignment="Center"/>
+            <Button Grid.Column="1" Content="Cancel/Exit" Style="{StaticResource PizzaButtonStyle}" Command="{Binding LoginCommand}" Width="120" Height="30" VerticalAlignment="Center"/>
+
+        </Grid>
+    </Grid>
+</Window>

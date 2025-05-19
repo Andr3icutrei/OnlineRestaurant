@@ -11,9 +11,10 @@ namespace OnlineRestaurant.Database.Entities
     {
         [MinLength(5), MaxLength(50)]
         public string Name { get; set; }
+    
         // foreign keys 
-        public int FoodCategoryId { get; set; }
-        public FoodCategory FoodCategory { get; set; }
+        public int? FoodCategoryId { get; set; }
+        public FoodCategory? FoodCategory { get; set; }
 
         //references
         public ICollection<Order> Orders { get; set; }

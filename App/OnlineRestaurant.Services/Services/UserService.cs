@@ -1,4 +1,5 @@
 ﻿using OnlineRestaurant.Database.Entities;
+using OnlineRestaurant.Database.Enums;
 using OnlineRestaurant.Database.Repositories;
 using System;
 using System.Collections.Generic;
@@ -23,5 +24,9 @@ namespace OnlineRestaurant.Core.Services
             await _repository.SaveChangesAsync();
         }
 
+        public async Task<bool> CanLoginUserAsync(string password, string username, UserType utype)
+        {
+            return await _repository.CanLoginUserAsync(password, username, utype);
+        }
     }
 }

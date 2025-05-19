@@ -12,5 +12,8 @@ namespace OnlineRestaurant.Core.Services
         Task AddFoodCategoryAsync(FoodCategory foodCategory);
         Task<bool> IsTypeUniqueAsync(FoodCategory foodCategory);
         IEnumerable<FoodCategory> GetAll();
+        Task<IEnumerable<FoodCategory>> GetAllAsync();
+        Task DeleteAsync(int id);
+        Task Update(FoodCategory foodCategory);
     }
 }

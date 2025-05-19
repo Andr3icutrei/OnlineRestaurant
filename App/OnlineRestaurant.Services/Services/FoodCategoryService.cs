@@ -21,9 +21,19 @@ namespace OnlineRestaurant.Core.Services
             await _repository.SaveChangesAsync();
         }
 
+        public async Task DeleteAsync(int id)
+        {
+            await _repository.SoftDeleteByIdAsync(id);
+        }
+
         public IEnumerable<FoodCategory> GetAll()
         {
             return _repository.GetAll();
+        }
+
+        public async Task<IEnumerable<FoodCategory>> GetAllAsync()
+        {
+            return await _repository.GetAllAsync();
         }
 
         public async Task<bool> IsTypeUniqueAsync(FoodCategory category)
@@ -31,5 +41,9 @@ namespace OnlineRestaurant.Core.Services
             return await _repository.IsTypeUniqueAsync(category);
         }
 
+        public async Task Update(FoodCategory foodCategory)
+        {
+            await _repository.Update(foodCategory);
+        }
     }
 }

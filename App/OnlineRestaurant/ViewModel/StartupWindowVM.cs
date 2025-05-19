@@ -49,8 +49,7 @@ namespace OnlineRestaurant.UI.ViewModel
 
         #region Commands
         public ICommand LoginAsGuestCommand { get; }
-        public ICommand LoginAsUserCommand { get; }
-        public ICommand LoginAsAdminCommand { get; }
+        public ICommand LoginCommand { get; }
         public ICommand RegisterCommand { get; }
         #endregion
 
@@ -60,27 +59,16 @@ namespace OnlineRestaurant.UI.ViewModel
             _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
 
             // Initialize commands
-            LoginAsGuestCommand = new RelayCommand(LoginAsGuest_Execute);
-            LoginAsUserCommand = new RelayCommand(LoginAsUser_Execute);
-            LoginAsAdminCommand = new RelayCommand(LoginAsAdmin_Execute);
+            LoginAsGuestCommand = new RelayCommand(Login_Execute);
+            LoginCommand = new RelayCommand(Login_Execute);
             RegisterCommand = new RelayCommand(Register_Execute);
         }
         #endregion
 
         #region Command Methods
-        public async void LoginAsGuest_Execute()
+        public void Login_Execute()
         {
-
-        }
-
-        public async void LoginAsUser_Execute()
-        {
-            
-        }
-
-        public async void LoginAsAdmin_Execute()
-        {
-            _navigationService.NavigateTo<AdministrationWindow>();
+            _navigationService.NavigateTo<LoginWindow>();
         }
 
         public void Register_Execute()

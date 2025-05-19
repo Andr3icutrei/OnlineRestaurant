@@ -11,5 +11,10 @@ namespace OnlineRestaurant.Core.Services
     {
         Task AddItemAsync(Item item);
         IEnumerable<Item> GetAll();
+        Task<IEnumerable<Item>> GetAllAsync();
+        Task DeleteAsync(int id);
+        Task UpdateAsync(Item item);
+        Task<Item?> GetItemWithReferencesAsync(int id);
+
     }
 }

@@ -4,6 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OnlineRestaurant.UI.View"
+        xmlns:extensions="clr-namespace:OnlineRestaurant.UI.Extensions"
+        xmlns:converters="clr-namespace:OnlineRestaurant.UI.Converters"
+        xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="AdministrationWindow" Height="450" Width="800">
 
@@ -14,6 +17,7 @@
                 <ResourceDictionary Source="/View/Resources/Background.xaml"/>
                 <ResourceDictionary Source="/View/Resources/FontStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <converters:DynamicPropertyConverter x:Key="DynamicPropertyConverter"/>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -30,26 +34,72 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-
-            <Button Command="{Binding InsertCommand}" Content="Insert" Style="{StaticResource ChefHatButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Height="60" Width="120"/>
-            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding ComboBoxItems}" SelectedItem="{Binding InsertSelectedItem}" Width="90" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
-            <Button Command="{Binding ModifyCommand}" Grid.Row="1" Content="Modify" Style="{StaticResource LogoButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="78" Height="51"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding ComboBoxItems}" SelectedItem="{Binding ModifySelectedItem}" Width="90" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
-            <Button Command="{Binding DisplayAllCommand}" Grid.Row="2" Content="Display all from" Style="{StaticResource PizzaButtonStyle}" Height="47" Margin="0,44,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" Width="108"/>
-            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding ComboBoxItems}" SelectedItem="{Binding DisplayAllSelectedItem}" Width="90" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
-            <Button Command="{Binding DeleteCommand}" Grid.Row="3" Content="Delete" Style="{StaticResource PepperoniButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Height="40" Width="40"/>
-            <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ComboBoxItems}" SelectedItem="{Binding DeleteSelectedItem}" Width="90" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        </Grid>
-        <Grid Grid.Column="1">
+            <Label Grid.Row="0" Content="{Binding AdminNameText}" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
             
+            <Button Grid.Row="1" Grid.Column="0" Command="{Binding InsertCommand}" Content="Insert" Style="{StaticResource ChefHatButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Height="60" Width="120"/>
+            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding ComboBoxItems}" SelectedItem="{Binding InsertSelectedItem}" Width="90" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+            <RadioButton Grid.Row="2" Command="{Binding ModifyRowCommand}" GroupName="DeleteModifyRBGroup" IsChecked="{Binding IsModifyChecked,Mode=TwoWay}" Content="Modify row" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Style="{StaticResource PapasPizzeriaRadioButtonStyle}"/>
+
+            <Button Grid.Row="3" Command="{Binding DisplayAllCommand}" Content="Display all from" Style="{StaticResource PizzaButtonStyle}" Height="47" HorizontalAlignment="Center" VerticalAlignment="Center" Width="108"/>
+            <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ComboBoxItems}" SelectedItem="{Binding DisplayAllSelectedItem}" Width="90" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+            <RadioButton Grid.Row="4" Command="{Binding DeleteRowCommand}" GroupName="DeleteModifyRBGroup" IsChecked="{Binding IsDeleteChecked,Mode=TwoWay}" Content="Delete row" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Style="{StaticResource PapasPizzeriaRadioButtonStyle}"/>
+        </Grid>
+        
+        <Grid Grid.Column="1">
+            <DataGrid
+            x:Name="DynamicGrid"
+            ItemsSource="{Binding CurrentGridData}"
+            AutoGenerateColumns="False"
+            CanUserAddRows="False"
+            IsReadOnly="True"
+            Margin="30,30,30,30"
+            ColumnWidth="155"
+            SelectionMode="Single"
+            SelectionUnit="FullRow"
+            SelectedItem="{Binding SelectedRow, Mode=TwoWay}">
+
+                <DataGrid.Resources>
+                        <!-- Override the default cell style to remove blue selection highlight -->
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, Path=Foreground}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="{x:Type DataGridRow}">
+                            <!-- Default values when not selected -->
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="Background" Value="#FF4040"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                </Trigger>
+                                <!-- Remove the focus visual style -->
+                                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                </DataGrid>
         </Grid>
     </Grid>
 </Window>

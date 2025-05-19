@@ -18,18 +18,22 @@ namespace OnlineRestaurant.UI.Services
             _serviceProvider = serviceProvider;
         }
 
-        public void NavigateTo<T>(bool close = true) where T : Window
+        public void NavigateTo<T>(object parameter = null, bool close = true) where T : Window
         {
-            var window = _serviceProvider.GetRequiredService<T>();
+            var window = _serviceProvider.GetRequiredService<T>(); 
+
+            if (parameter != null && window is INavigationAware navigationAware)
+            {
+                navigationAware.OnNavigatedTo(parameter);
+            }
+
             window.Show();
 
-            // Close the current window
             if (close && Application.Current.MainWindow != null && Application.Current.MainWindow.IsLoaded)
             {
                 Application.Current.MainWindow.Close();
             }
 
-            // Set the new window as the main window
             Application.Current.MainWindow = window;
         }
     }   

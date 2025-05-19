@@ -9,6 +9,7 @@ namespace OnlineRestaurant.Database.Repositories
 {
     public interface IMenuRepository : IBaseRepository<Menu>
     {
-
+        Task<IEnumerable<Item?>> GetItemsForMenuAsync(int id);
+        Task<Menu?> GetMenuWithReferencesAsync(int id);
     }
 }

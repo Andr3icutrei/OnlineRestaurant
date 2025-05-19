@@ -22,14 +22,29 @@ namespace OnlineRestaurant.Core.Services
             await _repository.SaveChangesAsync();
         }
 
+        public async Task DeleteAsync(int id)
+        {
+            await _repository.SoftDeleteByIdAsync(id);
+        }
+
         public IEnumerable<Allergen> GetAll()
         {
             return _repository.GetAll();
         }
 
+        public async Task<IEnumerable<Allergen>> GetAllAsync()
+        {
+            return await _repository.GetAllAsync();
+        }
+
         public async Task<bool> IsTypeUniqueAsync(Allergen allergen)
         {
             return await _repository.IsTypeUniqueAsync(allergen);
+        }
+
+        public async Task Update(Allergen allergen)
+        {
+            await _repository.Update(allergen);
         }
     }
 }

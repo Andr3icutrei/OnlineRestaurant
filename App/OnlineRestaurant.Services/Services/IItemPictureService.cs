@@ -12,5 +12,6 @@ namespace OnlineRestaurant.Core.Services
         List<ItemPicture> GetAll();
         void UpdateItemPicture(ItemPicture itemPicture);
         Task SaveChangesAsync();
+        Task<IEnumerable<ItemPicture>> GetAllAsync();
     }
 }

@@ -21,6 +21,11 @@ namespace OnlineRestaurant.Core.Services
             return _itemPictureRepository.GetAll();
         }
 
+        public async Task<IEnumerable<ItemPicture>> GetAllAsync()
+        {
+            return await _itemPictureRepository.GetAllAsync();
+        }
+
         public async Task SaveChangesAsync()
         {
             await _itemPictureRepository.SaveChangesAsync();

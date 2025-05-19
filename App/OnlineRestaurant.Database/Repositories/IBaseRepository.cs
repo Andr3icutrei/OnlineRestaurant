@@ -13,8 +13,9 @@ namespace OnlineRestaurant.Database.Repositories
         List<T> GetAll(bool includeDeletedEntities = false);
         Task<T?> GetFirstOrDefaultAsync(int primaryKey, bool includeDeletedEntities = false);
         void Insert(params T[] records);
-        void Update(params T[] records);
-        void SoftDelete(params T[] records);
+        Task Update(params T[] records);
+        Task SoftDelete(params T[] records);
         Task SaveChangesAsync();
+        Task SoftDeleteByIdAsync(int id);
     }
 }

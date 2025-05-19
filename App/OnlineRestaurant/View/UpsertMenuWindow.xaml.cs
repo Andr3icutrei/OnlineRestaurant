@@ -6,6 +6,7 @@ using OnlineRestaurant.UI.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -22,44 +23,32 @@ using System.Windows.Shapes;
 namespace OnlineRestaurant.UI.View
 {
     /// <summary>
-    /// Interaction logic for AddItemWindow.xaml
+    /// Interaction logic for AddMenuWindow.xaml
     /// </summary>
-    public partial class AddItemWindow : Window
+    public partial class UpsertMenuWindow : Window, INavigationAware
     {
-        private AddItemVM _viewModel;
-        public AddItemWindow()
+        private UpsertMenuVM _viewModel;
+        public UpsertMenuWindow()
         {
             InitializeComponent();
 
             var serviceProvider = ((App)Application.Current).HostInstance.Services;
-            var navigationService = serviceProvider.GetRequiredService<INavigationService>();
-            var foodCategoryService = serviceProvider.GetRequiredService<IFoodCategoryService>();
-            var itemService = serviceProvider.GetRequiredService<IItemService>();
-            var allergenService = serviceProvider.GetRequiredService<IAllergenService>();
-            var itemPictureService = serviceProvider.GetRequiredService<IItemPictureService>();
-
-            _viewModel = new AddItemVM(navigationService, itemService, foodCategoryService, allergenService, itemPictureService);
+            
+            _viewModel = serviceProvider.GetRequiredService<UpsertMenuVM>();
             DataContext = _viewModel;
 
-            _viewModel.PropertyChanged += ViewModel_PropertyChanged;
-
-            UpdateGridColumns(DynamicGridAllergens, _viewModel.GridColumnsAllergens);
-            UpdateGridColumns(DynamicGridItemPictures, _viewModel.GridColumnsItemPictures);
+            UpdateGridColumns(DynamicGridItems, _viewModel.GridColumnsItems);
         }
 
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(_viewModel.GridColumnsAllergens))
+            if (e.PropertyName == nameof(_viewModel.GridColumnsItems))
             {
-                UpdateGridColumns(DynamicGridAllergens, _viewModel.GridColumnsAllergens);
-            }
-            else if (e.PropertyName == nameof(_viewModel.GridColumnsItemPictures)) ;
-            {
-                UpdateGridColumns(DynamicGridItemPictures, _viewModel.GridColumnsItemPictures);
+                UpdateGridColumns(DynamicGridItems, _viewModel.GridColumnsItems);
             }
         }
 
-        private void UpdateGridColumns(DataGrid grid,IEnumerable<KeyValuePair<string,Models.GridColumnDefinition>> gridColumns)
+        private void UpdateGridColumns(DataGrid grid, IEnumerable<KeyValuePair<string, GridColumnDefinition>> gridColumns)
         {
             grid.Columns.Clear();
 
@@ -135,6 +124,21 @@ namespace OnlineRestaurant.UI.View
         {
             Regex regex = new Regex("[^0-9]+[\\.]?[^0-9]+");
             e.Handled = regex.IsMatch(e.Text);
+        }
+
+        public void OnNavigatedTo(object parameter)
+        {
+            if(parameter is OnlineRestaurant.Database.Entities.Menu menu)
+            {
+                try
+                {
+                    _viewModel.MenuToUpdate = menu;
+                }
+                catch (Exception ex)
+                {
+                    Debug.Print(ex.Message);
+                }
+            }
         }
     }
 }

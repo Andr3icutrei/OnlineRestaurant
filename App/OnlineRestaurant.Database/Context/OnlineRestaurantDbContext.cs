@@ -5,6 +5,7 @@ using OnlineRestaurant.Infrastructure.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,9 +23,9 @@ namespace OnlineRestaurant.Database.Context
         {
             foreach (var relationship in modelBuilder.Model.GetEntityTypes()
                 .SelectMany(e => e.GetForeignKeys()))
-                        {
-                            relationship.DeleteBehavior = DeleteBehavior.Restrict;
-                        }
+            {
+                relationship.DeleteBehavior = DeleteBehavior.Restrict;
+            }
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)

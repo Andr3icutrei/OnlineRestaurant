@@ -18,9 +18,24 @@ using System.Windows.Input;
 
 namespace OnlineRestaurant.UI.ViewModel
 {
-    public class AddItemVM : INotifyPropertyChanged
+    public class UpsertItemVM : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
+        private Item _itemToModify;
+        public Item ItemToModify
+        {
+            get => _itemToModify;
+            set
+            {
+                _itemToModify = value;
+                InitModifyMode();
+            }
+        }
+
+        private readonly INavigationService _navigationService;
+        private readonly IItemService _itemService;
+        private readonly IAllergenService _allergenService;
+        private readonly IItemPictureService _itemPictureService;
+
 
         private string _portionQuantityText;
         private string _totalQuantityText;
@@ -64,17 +79,14 @@ namespace OnlineRestaurant.UI.ViewModel
             }
         }
 
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         public ObservableCollection<FoodCategory> FoodCategoryItems { get; set; }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        private readonly INavigationService _navigationService;
-        private readonly IItemService _itemService;
-        private readonly IAllergenService _allergenService;
-        private readonly IItemPictureService _itemPictureService;
 
         private FoodCategory _selectedFoodCategory;
         public FoodCategory SelectedFoodCategory
@@ -185,7 +197,7 @@ namespace OnlineRestaurant.UI.ViewModel
         public ICommand AddItemCommand { get; }
         public ICommand CancelCommand { get; }
 
-        public AddItemVM(INavigationService navigationService,IItemService itemService,IFoodCategoryService categoryService,
+        public UpsertItemVM(INavigationService navigationService,IItemService itemService,IFoodCategoryService categoryService,
             IAllergenService allergenService,IItemPictureService itemPictureService)
         {
             _navigationService = navigationService;
@@ -193,7 +205,7 @@ namespace OnlineRestaurant.UI.ViewModel
             _allergenService = allergenService;
             _itemPictureService = itemPictureService;
 
-            AddItemCommand = new RelayCommand(AddItem_Execute, AddItem_CanExecute);
+            AddItemCommand = new RelayCommand(UpsertItem_Execute, UpsertItem_CanExecute);
             CancelCommand = new RelayCommand(Cancel_Execute);
 
             FoodCategoryItems = new ObservableCollection<FoodCategory>(categoryService.GetAll());
@@ -202,12 +214,43 @@ namespace OnlineRestaurant.UI.ViewModel
             LoadAllergens();
         }
 
+        private void InitModifyMode()
+        {
+            ItemNameText = ItemToModify.Name;
+            PriceText = ItemToModify.Price.ToString();
+            PortionQuantityText = ItemToModify.PortionQuantity.ToString();
+            TotalQuantityText = ItemToModify.TotalQuantity.ToString();
+
+            SelectedFoodCategoryIndex = ItemToModify.FoodCategoryId - 1 ?? 0;
+
+            _selectedItemPictures.Clear();
+            _selectedAllergens.Clear();
+
+            if (ItemToModify.Pictures != null)
+            {
+                foreach (var picture in ItemToModify.Pictures)
+                {
+                    _selectedItemPictures.Add(new DataRowVM(picture, CurrentColumnsItemPictures));
+                }
+            }
+            OnPropertyChanged(nameof(SelectedItemPictures));
+
+            if (ItemToModify.Allergens == null)
+                return;
+
+            foreach (var allergen in ItemToModify.Allergens)
+            {
+                _selectedAllergens.Add(new DataRowVM(allergen, CurrentColumnsAllergens));
+            }
+            OnPropertyChanged(nameof(SelectedAllergens));
+        }
+
         public void LoadItemPictures()
         {
             _currentColumnsItemPictures = new Dictionary<string, GridColumnDefinition>()
             {
                 ["Id"] = new GridColumnDefinition("Picture Id", "Id", typeof(int)),
-                ["PicturePath"] = new GridColumnDefinition("Picture Type", "PicturePath", typeof(string))
+                ["PicturePath"] = new GridColumnDefinition("Picture Path", "PicturePath", typeof(string))
             };
 
             CurrentDataItemPictures = new ObservableCollection<DataRowVM>();
@@ -238,43 +281,74 @@ namespace OnlineRestaurant.UI.ViewModel
             }
         }
 
-        public async void AddItem_Execute()
+        public async void UpsertItem_Execute()
         {
-            try
+            if (ItemToModify == null)
             {
-                Item i = new Item()
+                try
                 {
-                    Name = ItemNameText,
-                    Price = decimal.Parse(PriceText),
-                    PortionQuantity = float.Parse(PortionQuantityText),
-                    TotalQuantity = float.Parse(TotalQuantityText),
-                    FoodCategoryId = SelectedFoodCategoryIndex,
-                    Allergens = new List<Allergen>(),
-                    Pictures = new List<ItemPicture>() 
-                };
-                
-                foreach(DataRowVM allergen in _selectedAllergens)
+                    Item i = new Item()
+                    {
+                        Name = ItemNameText,
+                        Price = decimal.Parse(PriceText),
+                        PortionQuantity = float.Parse(PortionQuantityText),
+                        TotalQuantity = float.Parse(TotalQuantityText),
+                        FoodCategoryId = SelectedFoodCategoryIndex,
+                        Allergens = new List<Allergen>(),
+                        Pictures = new List<ItemPicture>()
+                    };
+
+                    foreach (DataRowVM allergen in _selectedAllergens)
+                    {
+                        i.Allergens.Add(allergen.GetOriginalData<Allergen>());
+                    }
+
+                    await _itemService.AddItemAsync(i);
+
+                    foreach (DataRowVM itemPicture in _selectedItemPictures)
+                    {
+                        ItemPicture ip = itemPicture.GetOriginalData<ItemPicture>();
+                        ip.ItemId = i.Id;
+                        _itemPictureService.UpdateItemPicture(ip);
+                        await _itemPictureService.SaveChangesAsync();
+                    }
+
+                    MessageBox.Show("Item added in the database!","Success",MessageBoxButton.OK,MessageBoxImage.Information);
+                }
+                catch (FormatException e)
                 {
-                    i.Allergens.Add(allergen.GetOriginalData<Allergen>());
+                    MessageBox.Show("You did not insert a valid number for price or quantity");
+                }
+            }
+            else
+            {
+                ICollection<ItemPicture> modifiedItemPictures = new List<ItemPicture>();
+                foreach(DataRowVM row in _selectedItemPictures)
+                {
+                    modifiedItemPictures.Add(row.GetOriginalData<ItemPicture>());
                 }
 
-                await _itemService.AddItemAsync(i);
-
-                foreach (DataRowVM itemPicture in _selectedItemPictures)
+                ICollection<Allergen> modifiedAllergens = new List<Allergen>();
+                foreach (DataRowVM row in _selectedAllergens)
                 {
-                    ItemPicture ip = itemPicture.GetOriginalData<ItemPicture>();
-                    ip.ItemId = i.Id;
-                    _itemPictureService.UpdateItemPicture(ip);
-                    await _itemPictureService.SaveChangesAsync();
+                    modifiedAllergens.Add(row.GetOriginalData<Allergen>());
                 }
-            } 
-            catch (FormatException e)
-            {
-                MessageBox.Show("You did not insert a valid number for price or quantity");  
+
+                ItemToModify.Pictures = modifiedItemPictures;
+                ItemToModify.Allergens = modifiedAllergens;
+                ItemToModify.FoodCategoryId = SelectedFoodCategoryIndex;
+                ItemToModify.Name = ItemNameText;
+                ItemToModify.Price = decimal.Parse(PriceText);
+                ItemToModify.PortionQuantity = float.Parse(PortionQuantityText);
+                ItemToModify.TotalQuantity = float.Parse(TotalQuantityText);
+
+                await _itemService.UpdateAsync(ItemToModify);
+
+                MessageBox.Show("Item modified in the database!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
-        public bool AddItem_CanExecute()
+        public bool UpsertItem_CanExecute()
         {
             return ItemNameText != string.Empty && PortionQuantityText != string.Empty && 
                 TotalQuantityText != string.Empty && PriceText != string.Empty;

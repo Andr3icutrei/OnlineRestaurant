@@ -41,4 +41,25 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="PapasPizzeriaCheckBoxStyle" TargetType="CheckBox">
+        <Setter Property="FontFamily" Value="Comic Sans MS"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Background" Value="#FFEEEEEE"/>
+        <Setter Property="BorderBrush" Value="#FF707070"/>
+        <Setter Property="Padding" Value="4,1,0,0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="PapasPizzeriaRadioButtonStyle" TargetType="RadioButton">
+        <Setter Property="FontFamily" Value="Comic Sans MS"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Background" Value="#FFEEEEEE"/>
+        <Setter Property="BorderBrush" Value="#FF707070"/>
+        <Setter Property="Padding" Value="4,1,0,0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+    </Style>
 </ResourceDictionary>

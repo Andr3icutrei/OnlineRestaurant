@@ -14,8 +14,18 @@ using System.Windows.Input;
 
 namespace OnlineRestaurant.UI.ViewModel
 {
-    public class AddFoodCategoryVM : INotifyPropertyChanged
+    public class UpsertFoodCategoryVM : INotifyPropertyChanged
     {
+        private FoodCategory? _foodCategoryToModify;
+        public FoodCategory? FoodCategoryToModify
+        {
+            get => _foodCategoryToModify;
+            set
+            {
+                _foodCategoryToModify = value;
+                InitModifyMode();
+            }
+        }
         private readonly INavigationService _navigationService;
         private readonly IFoodCategoryService _foodCategoryService;
 
@@ -31,34 +41,52 @@ namespace OnlineRestaurant.UI.ViewModel
                 OnPropertyChanged(nameof(CategoryNameText));
             }
         }
+
         public ObservableCollection<string> ComboBoxItems { get; set; }
 
         public ICommand AddCategoryCommand { get; }
         public ICommand CancelCommand { get; }
 
-        public AddFoodCategoryVM(IFoodCategoryService foodCategoryService, INavigationService navigationService) 
+        public UpsertFoodCategoryVM(IFoodCategoryService foodCategoryService, INavigationService navigationService) 
         {
             CategoryNameText = string.Empty;
 
             _foodCategoryService = foodCategoryService;
             _navigationService = navigationService;
 
-            AddCategoryCommand = new RelayCommand(AddCategory_Execute,AddCategory_CanExecute);
+            AddCategoryCommand = new AsyncRelayCommand(UpsertCategory_Execute, UpsertCategory_CanExecute);
             CancelCommand = new RelayCommand(Cancel_Execute);
         }
 
-        public async void AddCategory_Execute()
+        private void InitModifyMode()
         {
-            FoodCategory category = new Database.Entities.FoodCategory() { Type = CategoryNameText };
-            if (await _foodCategoryService.IsTypeUniqueAsync(category))
-            { 
-                _foodCategoryService.AddFoodCategoryAsync(category);
-                MessageBox.Show("Food category added!");
-                ClearTextBoxes();
+            if (FoodCategoryToModify != null)
+            {
+                CategoryNameText = FoodCategoryToModify.Type;
+            }
+        }
+
+        public async Task UpsertCategory_Execute()
+        {
+            if (FoodCategoryToModify == null)
+            {
+                FoodCategory category = new Database.Entities.FoodCategory() { Type = CategoryNameText };
+                if (await _foodCategoryService.IsTypeUniqueAsync(category))
+                {
+                    await _foodCategoryService.AddFoodCategoryAsync(category);
+                    MessageBox.Show("Food category added to the database!","Success",MessageBoxButton.OK,MessageBoxImage.Information);
+                    ClearTextBoxes();
+                }
+                else
+                {
+                    MessageBox.Show("Food category already exists!","Error",MessageBoxButton.OK,MessageBoxImage.Error);
+                }
             }
             else
             {
-                MessageBox.Show("Food category already exists!");
+                FoodCategoryToModify.Type = CategoryNameText;
+                await _foodCategoryService.Update(FoodCategoryToModify);
+                MessageBox.Show("Food category modified in the database!", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -67,7 +95,7 @@ namespace OnlineRestaurant.UI.ViewModel
             _navigationService.NavigateTo<AdministrationWindow>();
         }
 
-        public bool AddCategory_CanExecute()
+        public bool UpsertCategory_CanExecute()
         {
             return CategoryNameText != string.Empty;
         }

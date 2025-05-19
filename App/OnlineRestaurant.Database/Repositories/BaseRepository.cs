@@ -46,22 +46,33 @@ namespace OnlineRestaurant.Database.Repositories
             await _databaseContext.SaveChangesAsync();
         }
 
-        public void SoftDelete(params T[] records)
+        public async Task SoftDelete(params T[] records)
         {
             foreach (var baseEntity in records)
             {
                 baseEntity.DeletedAt = DateTime.UtcNow;
             }
-            Update(records);
+            await Update(records);
         }
 
-        public void Update(params T[] records)
+        public async Task SoftDeleteByIdAsync(int id)
+        {
+            var entity = await GetFirstOrDefaultAsync(id);
+            if(entity != null)
+            {
+                await SoftDelete(entity); 
+            }
+            await SaveChangesAsync();
+        }
+
+        public async Task Update(params T[] records)
         {
             foreach (var baseEntity in records)
             {
                 baseEntity.ModifiedAt = DateTime.UtcNow;
             }
             DbSet.UpdateRange(records);
+            await SaveChangesAsync();
         }
 
         protected IQueryable<T> GetRecords(bool includeDeletedEntities = false)

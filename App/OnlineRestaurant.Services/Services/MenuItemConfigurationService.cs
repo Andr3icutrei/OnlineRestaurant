@@ -21,5 +21,10 @@ namespace OnlineRestaurant.Core.Services
             _menuItemConfigurationRepository.Insert(menuItemConfiguration);
             await _menuItemConfigurationRepository.SaveChangesAsync();
         }
+
+        public async Task UpdateAsync(MenuItemConfiguration menuItemConfiguration)
+        {
+            await _menuItemConfigurationRepository.Update(menuItemConfiguration);
+        }
     }
 }

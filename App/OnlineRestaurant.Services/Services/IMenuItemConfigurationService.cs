@@ -10,5 +10,6 @@ namespace OnlineRestaurant.Core.Services
     public interface IMenuItemConfigurationService
     {
         Task AddMenuItemConfigurationAsync(MenuItemConfiguration menuItemConfiguration);
+        Task UpdateAsync(MenuItemConfiguration menuItemConfiguration);
     }
 }

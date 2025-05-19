@@ -72,32 +72,21 @@ namespace OnlineRestaurant
             services.AddTransient<StartupWindowVM>();
             services.AddTransient<RegisterWindowVM>();
             services.AddTransient<AdministrationWindowVM>();
-            services.AddTransient<AddFoodCategoryVM>();
-            services.AddTransient<AddAllergenVM>();
-            services.AddTransient<AddItemVM>();
-            services.AddTransient<AddMenuVM>();
+            services.AddTransient<UpsertFoodCategoryVM>();
+            services.AddTransient<UpsertAllergenVM>();
+            services.AddTransient<UpsertItemVM>();
+            services.AddTransient<UpsertMenuVM>();
             services.AddTransient<VariableTextBoxesVM>();
+            services.AddTransient<LoginWindowVM>();
 
-            services.AddTransient<StartupWindow>(provider =>
-                new StartupWindow { DataContext = provider.GetRequiredService<StartupWindowVM>() });
-
-            services.AddTransient<RegisterWindow>(provider =>
-                new RegisterWindow { DataContext = provider.GetRequiredService<RegisterWindowVM>() });
-            
-            services.AddTransient<AdministrationWindow>(provider => 
-                new AdministrationWindow { DataContext = provider.GetRequiredService<AdministrationWindowVM>() });
-
-            services.AddTransient<AddFoodCategoryWindow>(provider =>
-                new AddFoodCategoryWindow { DataContext = provider.GetRequiredService<AddFoodCategoryVM>() });
-
-            services.AddTransient<AddAllergenWindow>(provider =>
-                new AddAllergenWindow { DataContext = provider.GetRequiredService<AddAllergenVM>() });
-
-            services.AddTransient<AddItemWindow>(provider =>
-                new AddItemWindow { DataContext = provider.GetRequiredService<AddItemVM>() });
-
-            services.AddTransient<AddMenuWindow>(provider => 
-                new AddMenuWindow { DataContext = provider.GetRequiredService<AddMenuVM>() });
+            services.AddTransient<StartupWindow>();
+            services.AddTransient<RegisterWindow>();
+            services.AddTransient<AdministrationWindow>();
+            services.AddTransient<UpsertFoodCategoryWindow>();
+            services.AddTransient<UpsertAllergenWindow>();
+            services.AddTransient<UpsertItemWindow>();
+            services.AddTransient<UpsertMenuWindow>();
+            services.AddTransient<LoginWindow>();
         }
 
         private void Current_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

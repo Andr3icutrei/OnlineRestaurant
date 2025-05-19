@@ -12,13 +12,25 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace OnlineRestaurant.UI.ViewModel
 {
-    public class AddMenuVM : INotifyPropertyChanged
+    public class UpsertMenuVM : INotifyPropertyChanged
     {
+        private OnlineRestaurant.Database.Entities.Menu _menuToUpdate;
+        public OnlineRestaurant.Database.Entities.Menu MenuToUpdate
+        {
+            get => _menuToUpdate;
+            set
+            {
+                _menuToUpdate = value;
+                InitUpdateMode();
+            }
+        }
+
         private readonly INavigationService _navigationService;
         private readonly IFoodCategoryService _foodCategoryService;
         private readonly IItemService _itemService;
@@ -26,8 +38,6 @@ namespace OnlineRestaurant.UI.ViewModel
         private readonly IMenuItemConfigurationService _menuItemConfigurationService;
 
         public string MenuNameText { get; set; }
-        public string MenuPortionQuantityText { get; set; }
-
         public ObservableCollection<FoodCategory> FoodCategoryItems { get; set; }
         public int SelectedFoodCategoryIndex { get; set; } = -1;
         private FoodCategory _selectedFoodCategory;
@@ -44,7 +54,7 @@ namespace OnlineRestaurant.UI.ViewModel
         public IEnumerable<KeyValuePair<string, GridColumnDefinition>> GridColumnsItems => _currentColumnsItems;
 
         private Dictionary<string, GridColumnDefinition> _currentColumnsItems;
-        public ObservableCollection<DataRowVM> CurrentDataItems { get;set; }
+        public ObservableCollection<DataRowVM> CurrentDataItems { get; set; }
 
         private ObservableCollection<DataRowVM> _selectedItems = new ObservableCollection<DataRowVM>();
         public IList SelectedItems
@@ -73,7 +83,7 @@ namespace OnlineRestaurant.UI.ViewModel
         public ICommand AddMenuCommand { get; set; }
         public ICommand CancelCommand { get; set; }
 
-        public AddMenuVM(INavigationService navigationService,IItemService itemService,IFoodCategoryService foodCategoryService,
+        public UpsertMenuVM(INavigationService navigationService,IItemService itemService,IFoodCategoryService foodCategoryService,
             IMenuService menuService,IMenuItemConfigurationService menuItemConfigurationService)
         {
             _menuItemConfigurationService = menuItemConfigurationService;
@@ -82,11 +92,26 @@ namespace OnlineRestaurant.UI.ViewModel
             _navigationService = navigationService;
             _itemService = itemService;
 
-            AddMenuCommand = new RelayCommand(AddMenu_Execute, AddMenu_CanExecute);
+            AddMenuCommand = new AsyncRelayCommand(UpsertMenu_Execute, UpsertMenu_CanExecute);
             CancelCommand = new RelayCommand(Cancel_Execute);
 
             LoadFoodCategoryItems();
             LoadItemsDataGrid();
+        }
+
+        private async Task InitUpdateMode()
+        {
+            MenuNameText = MenuToUpdate.Name;
+            SelectedFoodCategoryIndex = MenuToUpdate.FoodCategoryId - 1 ?? 0;
+
+            _selectedItems.Clear();
+
+            List<Item> items = new List<Item>(await _menuService.GetItemsForMenuAsync(MenuToUpdate.Id));
+
+            foreach(Item item in items)
+            {
+                _selectedItems.Add(new DataRowVM(item,_currentColumnsItems));
+            }
         }
 
         public void LoadFoodCategoryItems()
@@ -113,7 +138,7 @@ namespace OnlineRestaurant.UI.ViewModel
             }
         }
 
-        public async void AddMenu_Execute()
+        public async Task UpsertMenu_Execute()
         {
             WindowService ws = new WindowService();
             List<Item> items = new List<Item>();
@@ -127,37 +152,60 @@ namespace OnlineRestaurant.UI.ViewModel
             this,
             async (vm, wasConfirmed) =>
                 {
-                if(!wasConfirmed)
-                    return;
+                    if(!wasConfirmed)
+                        return;
 
-                var viewModel = (VariableTextBoxesVM)vm;
+                    var viewModel = (VariableTextBoxesVM)vm;
 
-                Database.Entities.Menu menu = new Database.Entities.Menu
-                {
-                    Name = MenuNameText,
-                    FoodCategoryId = SelectedFoodCategoryIndex
-                };
-
-                await _menuService.AddMenuAsync(menu); 
-
-                for(int i = 0; i < viewModel.TextFieldItems.Count; i++)
-                {
-                    MenuItemConfiguration menuItemConfiguration = new MenuItemConfiguration()
+                    if (MenuToUpdate == null)
                     {
-                        ItemId = _selectedItems[i].GetOriginalData<Item>().Id,
-                        MenuId = menu.Id,
-                        MenuPortionQuantity = float.Parse(viewModel.TextFieldItems[i].Value)
-                    };
-                    await _menuItemConfigurationService.AddMenuItemConfigurationAsync(menuItemConfiguration);
+                        Database.Entities.Menu menu = new Database.Entities.Menu
+                        {
+                            Name = MenuNameText,
+                            FoodCategoryId = SelectedFoodCategoryIndex
+                        };
+
+                        await _menuService.AddMenuAsync(menu);
+
+                        for (int i = 0; i < viewModel.TextFieldItems.Count; i++)
+                        {
+                            MenuItemConfiguration menuItemConfiguration = new MenuItemConfiguration()
+                            {
+                                ItemId = _selectedItems[i].GetOriginalData<Item>().Id,
+                                MenuId = menu.Id,
+                                MenuPortionQuantity = float.Parse(viewModel.TextFieldItems[i].Value)
+                            };
+                            await _menuItemConfigurationService.AddMenuItemConfigurationAsync(menuItemConfiguration);
+                        }
+
+                        MessageBox.Show("Menu added to the database!","Success",MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MenuToUpdate.Name = MenuNameText;
+                        MenuToUpdate.FoodCategoryId = SelectedFoodCategoryIndex;
+
+                        await _menuService.UpdateAsync(MenuToUpdate);
+
+                        int i = 0;
+                        foreach(MenuItemConfiguration configuration in MenuToUpdate.ItemConfigurations) 
+                        {
+                            configuration.ItemId = _selectedItems[i].GetOriginalData<Item>().Id;
+                            configuration.MenuId = MenuToUpdate.Id;
+                            configuration.MenuPortionQuantity = float.Parse(viewModel.TextFieldItems[i].Value);
+                            await _menuItemConfigurationService.UpdateAsync(configuration);
+                            i++;
+                        };
+
+                        MessageBox.Show("Menu modified in the database!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
                 }
-            }
         );
         }
 
-        public bool AddMenu_CanExecute()
+        public bool UpsertMenu_CanExecute()
         {
-            return MenuNameText != string.Empty && MenuPortionQuantityText != string.Empty &&
-                SelectedFoodCategoryIndex != -1;
+            return MenuNameText != string.Empty && SelectedFoodCategoryIndex != -1;
         }
 
         public void Cancel_Execute() 

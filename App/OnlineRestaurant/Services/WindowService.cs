@@ -20,55 +20,6 @@ namespace OnlineRestaurant.UI.Services
             public object ViewModel { get; set; }
         }
 
-        public void ShowWindow<T>(object dataContext = null, object owner = null) where T : Window, new()
-        {
-            var window = new T();
-
-            if (dataContext != null)
-            {
-                window.DataContext = dataContext;
-            }
-
-            _windowContexts[window] = new WindowContext
-            {
-                Owner = owner,
-                ViewModel = dataContext ?? window.DataContext
-            };
-
-            WireUpCloseRequest(window);
-
-            window.Closed += Window_Closed;
-
-            window.Show();
-        }
-
-        public bool? ShowDialog<T>(object dataContext = null, object owner = null) where T : Window, new()
-        {
-            var window = new T();
-
-            if (dataContext != null)
-            {
-                window.DataContext = dataContext;
-            }
-
-            _windowContexts[window] = new WindowContext
-            {
-                Owner = owner,
-                ViewModel = dataContext ?? window.DataContext
-            };
-
-            WireUpCloseRequest(window);
-
-            window.Closed += Window_Closed;
-
-            if (owner is Window ownerWindow)
-            {
-                window.Owner = ownerWindow;
-            }
-
-            return window.ShowDialog();
-        }
-
         public void ShowVariableTextBoxesWindow(
             List<Item> selectedItems,
             object owner,
@@ -114,15 +65,6 @@ namespace OnlineRestaurant.UI.Services
             if (window != null)
             {
                 window.Close();
-            }
-        }
-        private void WireUpCloseRequest(Window window)
-        {
-            var viewModel = window.DataContext;
-
-            if (viewModel is ICloseable closeable)
-            {
-                closeable.RequestClose = () => CloseWindow(window);
             }
         }
 

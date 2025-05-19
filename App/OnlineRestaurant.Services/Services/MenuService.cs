@@ -22,5 +22,30 @@ namespace OnlineRestaurant.Core.Services
             _menuRepository.Insert(entity);
             await _menuRepository.SaveChangesAsync();
         }
+
+        public async Task DeleteAsync(int id)
+        {
+            await _menuRepository.SoftDeleteByIdAsync(id);
+        }
+
+        public async Task<IEnumerable<Menu>> GetAllAsync()
+        {
+            return await _menuRepository.GetAllAsync();
+        }
+
+        public async Task<IEnumerable<Item?>> GetItemsForMenuAsync(int id)
+        {
+            return await _menuRepository.GetItemsForMenuAsync(id);
+        }
+
+        public async Task<Menu?> GetMenuWithReferencesAsync(int id)
+        {
+            return await _menuRepository.GetMenuWithReferencesAsync(id);
+        }
+
+        public async Task UpdateAsync(Menu menu)
+        {
+            await _menuRepository.Update(menu);
+        }
     }
 }

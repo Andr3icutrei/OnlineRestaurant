@@ -11,8 +11,6 @@ namespace OnlineRestaurant.UI.Services
 {
     public interface IWindowService
     {
-        void ShowWindow<T>(object dataContext = null, object owner = null) where T : Window, new();
-        bool? ShowDialog<T>(object dataContext = null, object owner = null) where T : Window, new();
         void CloseWindow(Window window);
         void ShowVariableTextBoxesWindow(
             List<Item> selectedItems,

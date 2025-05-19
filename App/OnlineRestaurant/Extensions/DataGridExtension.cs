@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows;
 using System.Diagnostics;
+using System.Windows.Threading;
+using OnlineRestaurant.UI.ViewModel;
+using OnlineRestaurant.Database.Entities;
+using System.Diagnostics.Metrics;
 
 namespace OnlineRestaurant.UI.Extensions
 {
@@ -17,7 +21,7 @@ namespace OnlineRestaurant.UI.Extensions
                 "SelectedItems",
                 typeof(IList),
                 typeof(DataGridExtension),
-                new PropertyMetadata(null, OnSelectedItemsChanged));
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedItemsChanged));
 
         public static IList GetSelectedItems(DependencyObject obj)
         {
@@ -33,26 +37,25 @@ namespace OnlineRestaurant.UI.Extensions
         {
             if (d is DataGrid dataGrid)
             {
-                // Remove the previous handler if any
-                if (e.OldValue != null)
-                {
-                    dataGrid.SelectionChanged -= OnDataGridSelectionChanged;
-                }
+                Debug.Print($"OnSelectedItemsChanged called. Old value: {e.OldValue}, New value: {e.NewValue}");
 
-                // Add new handler if we have a new value
+                dataGrid.SelectionChanged -= OnDataGridSelectionChanged;
+
                 if (e.NewValue != null)
                 {
-                    // Make sure the DataGrid can select multiple items
                     if (dataGrid.SelectionMode == DataGridSelectionMode.Single)
                     {
                         dataGrid.SelectionMode = DataGridSelectionMode.Extended;
+                        Debug.Print("Changed DataGrid SelectionMode to Extended");
                     }
 
-                    // Hook up the SelectionChanged event
                     dataGrid.SelectionChanged += OnDataGridSelectionChanged;
+                    Debug.Print("Hooked up SelectionChanged event handler");
 
-                    // Initialize the DataGrid selection based on the bound collection
-                    UpdateDataGridSelection(dataGrid, e.NewValue as IList);
+                    dataGrid.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        UpdateDataGridSelection(dataGrid, e.NewValue as IList);
+                    }), DispatcherPriority.Loaded);
                 }
             }
         }
@@ -61,42 +64,80 @@ namespace OnlineRestaurant.UI.Extensions
         {
             if (sender is DataGrid dataGrid)
             {
-                // Get the bound collection
                 IList boundList = GetSelectedItems(dataGrid);
                 if (boundList == null) return;
 
-                // Add newly selected items
-                foreach (var item in e.AddedItems)
+                Debug.Print($"SelectionChanged event fired. Added: {e.AddedItems.Count}, Removed: {e.RemovedItems.Count}");
+
+                dataGrid.SelectionChanged -= OnDataGridSelectionChanged;
+
+                try
                 {
-                    if (!boundList.Contains(item))
+                    foreach (var item in e.AddedItems)
                     {
-                        boundList.Add(item);
+                        if (!boundList.Contains(item))
+                        {
+                            boundList.Add(item);
+                            Debug.Print($"Added item to bound list: {item}");
+                        }
+                    }
+
+                    foreach (var item in e.RemovedItems)
+                    {
+                        boundList.Remove(item);
+                        Debug.Print($"Removed item from bound list: {item}");
                     }
                 }
-
-                // Remove deselected items
-                foreach (var item in e.RemovedItems)
+                finally
                 {
-                    boundList.Remove(item);
+                    dataGrid.SelectionChanged += OnDataGridSelectionChanged;
                 }
 
-                // Debugging output
                 Debug.Print($"Selection changed. Total selected items: {boundList.Count}");
             }
         }
 
-        // Method to update DataGrid selection from the bound collection
         private static void UpdateDataGridSelection(DataGrid dataGrid, IList collection)
         {
-            if (collection == null || dataGrid == null) return;
+            if (collection == null || dataGrid == null || dataGrid.ItemsSource == null) return;
 
-            // Clear current selection
-            dataGrid.SelectedItems.Clear();
-
-            // Add all items from the bound collection to the selection
-            foreach (var item in collection)
+            dataGrid.SelectionChanged -= OnDataGridSelectionChanged;
+            try
             {
-                dataGrid.SelectedItems.Add(item);
+                dataGrid.SelectedItems.Clear();
+                List<DataRowVM> itemsSource = dataGrid.ItemsSource.Cast<DataRowVM>().ToList();
+
+                int matchCount = 0;
+                foreach (var selectedItem in collection)
+                {
+                    if (selectedItem is DataRowVM selectedDataRowVM)
+                    {
+                        var selectedEntity = selectedDataRowVM.GetOriginalData<BaseEntity>();
+
+                        if (selectedEntity != null)
+                        {
+                            int selectedId = selectedEntity.Id;
+
+                            DataRowVM matchingItem = itemsSource.FirstOrDefault(item => {
+                                var entity = item.GetOriginalData<BaseEntity>();
+                                return entity != null && entity.Id == selectedId;
+                            });
+
+                            if (matchingItem != null)
+                            {
+                                dataGrid.SelectedItems.Add(matchingItem);
+                                matchCount++;
+                            }
+                        }
+                    }
+                }
+
+                // One line of debug information showing the key results
+                Debug.Print($"Selection result: {matchCount}/{collection.Count} items matched, final selection count: {dataGrid.SelectedItems.Count}");
+            }
+            finally
+            {
+                dataGrid.SelectionChanged += OnDataGridSelectionChanged;
             }
         }
     }

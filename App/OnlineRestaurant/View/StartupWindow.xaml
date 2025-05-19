@@ -35,16 +35,9 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Command="{Binding LoginAsGuestCommand}" Style="{StaticResource LogoButtonStyle}" Content="Login as Guest" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="167"/>
-                <Button Grid.Column="1" Command="{Binding RegisterCommand}" Style="{StaticResource ChefHatButtonStyle}" Content="Register"  HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="167"/>
-            </Grid>
-            <Button Command="{Binding LoginAsUserCommand}" Style="{StaticResource PizzaButtonStyle}"  Grid.Row="1" Content="Login as User" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="134"/>
-            <Button Command="{Binding LoginAsAdminCommand}" Style="{StaticResource PepperoniButtonStyle}" Grid.Row="2" Content="Login as Admin" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="134"/>
+            <Button Grid.Row="0" Command="{Binding LoginAsGuestCommand}" Style="{StaticResource LogoButtonStyle}" Content="Login as Guest" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="167"/>
+            <Button Grid.Row="1" Command="{Binding RegisterCommand}" Style="{StaticResource ChefHatButtonStyle}" Content="Register"  HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="167"/>
+            <Button Grid.Row="2" Command="{Binding LoginCommand}" Style="{StaticResource PizzaButtonStyle}" Content="Login" HorizontalAlignment="Center" VerticalAlignment="Center" Height="50" Width="134"/>
         </Grid>
 
     </Grid>
