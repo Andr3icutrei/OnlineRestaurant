@@ -10,6 +10,6 @@ namespace OnlineRestaurant.Database.Repositories
 {
     public interface IUserRepository : IBaseRepository<User>
     {
-        Task<bool> CanLoginUserAsync(string email,string password,UserType uytpe);
+        Task<User?> CanLoginUserAsync(string email,string password,UserType uytpe);
     }
 }

@@ -29,6 +29,7 @@ namespace OnlineRestaurant.UI.ViewModel
         public ICommand SelectionChangedCommand { get; }
         public ICommand DeleteRowCommand {  get; }
         public ICommand ModifyRowCommand { get; }
+        public ICommand CancelCommand { get; }
         #endregion
 
         #region CanCheckModifyAndDelete
@@ -87,6 +88,7 @@ namespace OnlineRestaurant.UI.ViewModel
             DisplayAllCommand = new RelayCommand(DisplayAll_Execute, DisplayAll_CanExecute);
             DeleteRowCommand = new AsyncRelayCommand(Delete_Execute, Delete_CanExecute);
             ModifyRowCommand = new AsyncRelayCommand(Modify_Execute, Modify_CanExecute);
+            CancelCommand = new RelayCommand(Cancel_Execute);
 
             ComboBoxItems = new ObservableCollection<string>()
             {
@@ -200,6 +202,7 @@ namespace OnlineRestaurant.UI.ViewModel
                 await _allergenService.DeleteAsync(SelectedRow.GetOriginalData<Allergen>().Id); 
                 MessageBox.Show("Allergen deleted succesfully","Succes",MessageBoxButton.OK, MessageBoxImage.Information);
             }
+            DisplayAll_Execute();
         }
 
         public async Task Modify_Execute()
@@ -263,6 +266,11 @@ namespace OnlineRestaurant.UI.ViewModel
         public bool DisplayAll_CanExecute()
         {
             return DisplayAllSelectedItem != null;
+        }
+
+        public void Cancel_Execute()
+        {
+            _navigationService.NavigateTo<StartupWindow>();
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)

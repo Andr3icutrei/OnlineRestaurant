@@ -1,4 +1,5 @@
 ﻿using OnlineRestaurant.Core.Services;
+using OnlineRestaurant.Database.Entities;
 using OnlineRestaurant.Database.Enums;
 using OnlineRestaurant.UI.Services;
 using OnlineRestaurant.UI.View;
@@ -40,18 +41,18 @@ namespace OnlineRestaurant.UI.ViewModel
 
         public async Task Login_Execute()
         {
-            bool userExists = false;
+            User user = null;
             if (IsAdminChecked)
-                userExists = await _userService.CanLoginUserAsync(EmailText, PasswordText,UserType.Admin);
+                user = await _userService.CanLoginUserAsync(EmailText, PasswordText,UserType.Admin);
             else if(IsUserChecked)
-                userExists = await _userService.CanLoginUserAsync(EmailText, PasswordText, UserType.Registered);
+                user = await _userService.CanLoginUserAsync(EmailText, PasswordText, UserType.Registered);
 
-            if (userExists)
+            if (user != null)
             {
                 if(IsAdminChecked)
                     _navigationService.NavigateTo<AdministrationWindow>();
                 else if(IsUserChecked)
-                    _navigationService.NavigateTo<AdministrationWindow>();
+                    _navigationService.NavigateTo<UserWindow>(user);
             }
             else
             {

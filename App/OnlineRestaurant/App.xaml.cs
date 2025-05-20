@@ -55,6 +55,7 @@ namespace OnlineRestaurant
             services.AddScoped<IItemRepository,  ItemRepository>();
             services.AddScoped<IItemPictureRepository, ItemPictureRepository>();
             services.AddScoped<IMenuItemConfigurationRepository, MenuItemConfigurationRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
 
             // Register services
             services.AddScoped<IUserService, UserService>();
@@ -64,6 +65,7 @@ namespace OnlineRestaurant
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IItemPictureService, ItemPictureService>();
             services.AddScoped<IMenuItemConfigurationService, MenuItemConfigurationService>();
+            services.AddScoped<IOrderService, OrderService>();
 
             // Register navigation service
             services.AddSingleton<INavigationService, NavigationService>();
@@ -78,6 +80,9 @@ namespace OnlineRestaurant
             services.AddTransient<UpsertMenuVM>();
             services.AddTransient<VariableTextBoxesVM>();
             services.AddTransient<LoginWindowVM>();
+            services.AddTransient<UserWindowVM>();
+            services.AddTransient<GuestWindowVM>();
+            services.AddTransient<OrdersControlVM>();
 
             services.AddTransient<StartupWindow>();
             services.AddTransient<RegisterWindow>();
@@ -87,6 +92,8 @@ namespace OnlineRestaurant
             services.AddTransient<UpsertItemWindow>();
             services.AddTransient<UpsertMenuWindow>();
             services.AddTransient<LoginWindow>();
+            services.AddTransient<UserWindow>();
+            services.AddTransient<GuestWindow>();
         }
 
         private void Current_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

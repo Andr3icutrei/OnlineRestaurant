@@ -1,0 +1,372 @@
+﻿<UserControl x:Class="OnlineRestaurant.UI.View.FoodMenuUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:OnlineRestaurant.UI.View"
+             xmlns:converters="clr-namespace:OnlineRestaurant.UI.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="980">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/View/Resources/PapasButtonStyle.xaml"/>
+                <ResourceDictionary Source="/View/Resources/Background.xaml"/>
+                <ResourceDictionary Source="/View/Resources/FontStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:DynamicPropertyConverter x:Key="DynamicPropertyConverter"/>
+            <converters:RelativeToAbsolutePathConverter x:Key="RelativeToAbsolutePathConverter"/>
+            <converters:ItemQuantityConverter x:Key="ItemQuantityConverter"/>
+
+            <DataTemplate x:Key="MenuItemTemplate">
+                <Border BorderBrush="{StaticResource BackgroundBeigeBrush}" BorderThickness="2" CornerRadius="8" Margin="5" Padding="10">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Food Image -->
+                        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" 
+                BorderBrush="{StaticResource PizzaRedBrush}" BorderThickness="2" 
+                CornerRadius="8" Margin="0,0,10,0">
+                            <Image Width="100" Height="100" Stretch="Uniform">
+                                <Image.Source>
+                                    <Binding Path="Pictures[0].PicturePath" Converter="{StaticResource RelativeToAbsolutePathConverter}" />
+                                </Image.Source>
+                            </Image>
+                        </Border>
+
+                        <!-- Item Name -->
+                        <TextBlock Grid.Row="0" Grid.Column="1" 
+                Text="{Binding Name}" 
+                Style="{StaticResource PapasPizzeriaHeaderTextStyle}" 
+                FontSize="16"/>
+
+                        <!-- Price -->
+                        <TextBlock Grid.Row="2" Grid.Column="1" 
+                Text="{Binding Price, StringFormat='${0:F2}'}" 
+                Style="{StaticResource PapasPizzeriaTextStyle}" 
+                FontSize="14" FontWeight="Bold" 
+                Foreground="{StaticResource PizzaRedBrush}"/>
+
+                        <!-- Allergens Section - Simple approach without converters -->
+                        <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                   Background="#FFF8E1" 
+                   BorderBrush="#FFECB3" 
+                   BorderThickness="1" 
+                   CornerRadius="4"
+                   Margin="0,10,0,10" 
+                   Padding="8,5">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Allergens Header -->
+                                <TextBlock Grid.Row="0" 
+                              Text="Allergens" 
+                              FontWeight="Bold" 
+                              Foreground="{StaticResource PizzaRedBrush}" 
+                              Margin="0,0,0,5"/>
+
+                                <!-- Simple Allergens List -->
+                                <ItemsControl Grid.Row="1" 
+                                 ItemsSource="{Binding Allergens}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Type}" 
+                                          Margin="0,0,8,0" 
+                                          Foreground="#D32F2F"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
+                        </Border>
+
+                        <!-- Quantity Controls -->
+                        <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" 
+                Orientation="Horizontal" 
+                HorizontalAlignment="Right" 
+                Margin="0,10,0,0">
+                            <Button Style="{StaticResource PepperoniButtonStyle}" 
+                    Command="{Binding DataContext.DecrementCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                    CommandParameter="{Binding}" 
+                    Content="-" 
+                    FontSize="16"/>
+                            <TextBlock Text="{Binding PortionQuantity}" 
+                    Style="{StaticResource PapasPizzeriaTextStyle}" 
+                    VerticalAlignment="Center" 
+                    Margin="10,0" 
+                    FontSize="16" 
+                    FontWeight="Bold"/>
+                            <Button Style="{StaticResource PepperoniButtonStyle}" 
+                    Command="{Binding DataContext.IncrementCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                    CommandParameter="{Binding}" 
+                    Content="+" 
+                    FontSize="16"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </DataTemplate>
+
+            <DataTemplate x:Key="MenuTemplate">
+                <Border BorderBrush="{StaticResource CrustBrush}" BorderThickness="2" CornerRadius="8" Margin="5" Padding="10">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Menu Name -->
+                        <TextBlock Grid.Row="0"
+                Text="{Binding Name}" 
+                Style="{StaticResource PapasPizzeriaHeaderTextStyle}" 
+                FontSize="16" Margin="0,0,0,10"/>
+
+                        <!-- Items in the Menu -->
+                        <ItemsControl Grid.Row="1" 
+                        ItemsSource="{Binding ItemConfigurations}"
+                        Margin="0,0,0,10">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="5">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Item Name -->
+                                        <TextBlock Grid.Column="0" 
+                                    Text="{Binding MenuItem.Name}" 
+                                    Style="{StaticResource PapasPizzeriaTextStyle}"
+                                    VerticalAlignment="Center"/>
+
+                                        <!-- Item Quantity -->
+                                        <TextBlock Grid.Column="1" 
+                                    Text="{Binding MenuPortionQuantity, StringFormat='x{0}'}" 
+                                    Style="{StaticResource PapasPizzeriaTextStyle}" 
+                                    FontWeight="Bold"
+                                    Margin="10,0,0,0"
+                                    VerticalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- Menu Quantity Controls -->
+                        <StackPanel Grid.Row="2"
+                      Orientation="Horizontal" 
+                      HorizontalAlignment="Right" 
+                      Margin="0,10,0,0">
+                            <Button Style="{StaticResource PepperoniButtonStyle}" 
+                      Command="{Binding DataContext.DecrementCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                      CommandParameter="{Binding}" 
+                      Content="-" 
+                      FontSize="16"/>
+
+                            <TextBlock Text="{Binding MenuQuantity}" 
+                         Style="{StaticResource PapasPizzeriaTextStyle}" 
+                         VerticalAlignment="Center" 
+                         Margin="10,0" 
+                         FontSize="16" 
+                         FontWeight="Bold"/>
+
+                            <Button Style="{StaticResource PepperoniButtonStyle}" 
+                      Command="{Binding DataContext.IncrementCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                      CommandParameter="{Binding}" 
+                      Content="+" 
+                      FontSize="16"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </DataTemplate>
+
+            <DataTemplate x:Key="OrderItemTemplate">
+                <Border BorderBrush="{StaticResource CheeseBrush}" BorderThickness="1" CornerRadius="4" Margin="2" Padding="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Quantity -->
+                        <TextBlock Grid.Column="0" Text="{Binding Quantity}" 
+                                  Style="{StaticResource PapasPizzeriaTextStyle}" 
+                                  Margin="0,0,5,0" VerticalAlignment="Center"/>
+
+                        <!-- Item Name -->
+                        <TextBlock Grid.Column="1" Text="{Binding Name}" 
+                                  Style="{StaticResource PapasPizzeriaTextStyle}" 
+                                  VerticalAlignment="Center"/>
+
+                        <!-- Item Price -->
+                        <TextBlock Grid.Column="2" 
+                                  Text="{Binding TotalPrice, StringFormat='${0:F2}'}" 
+                                  Style="{StaticResource PapasPizzeriaTextStyle}" 
+                                  VerticalAlignment="Center" 
+                                  Margin="10,0"/>
+                    </Grid>
+                </Border>
+            </DataTemplate>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <!-- Main Content Grid -->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Menu Items Area - Left Column -->
+        <Border Grid.Column="0" Background="{StaticResource PizzaPatternBrush}" 
+                BorderBrush="{StaticResource CrustBrush}" BorderThickness="2" 
+                CornerRadius="10" Padding="10" Margin="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="Menu Items" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding GroupedItems}">
+                        <ItemsControl.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{StaticResource CheeseBrush}" 
+                                    Padding="5" Margin="0,10,0,5">
+                                            <TextBlock Text="{Binding Name}" 
+                                           FontWeight="Bold" 
+                                           FontSize="14"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                                <GroupStyle.ContainerStyle>
+                                    <Style TargetType="{x:Type GroupItem}">
+                                        <Setter Property="Margin" Value="0,0,0,10"/>
+                                    </Style>
+                                </GroupStyle.ContainerStyle>
+                            </GroupStyle>
+                        </ItemsControl.GroupStyle>
+                        <ItemsControl.ItemTemplate>
+                            <StaticResource ResourceKey="MenuItemTemplate"/>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <!-- Available Menus - Middle Column -->
+        <Border Grid.Column="1" Background="{StaticResource PizzaPatternBrush}" 
+                BorderBrush="DarkGray" BorderThickness="2" 
+                CornerRadius="10" Padding="10" Margin="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="Available Menus" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding AvailableMenus}" 
+                              ItemTemplate="{StaticResource MenuTemplate}" />
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <!-- Separator -->
+        <GridSplitter Grid.Column="2" Width="5" 
+                     HorizontalAlignment="Center" VerticalAlignment="Stretch" 
+                     Background="{StaticResource PizzaRedBrush}"/>
+
+        <!-- Order Summary - Right Column -->
+        <Grid Grid.Column="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Order Title -->
+            <TextBlock Grid.Row="0" Text="Current Order" 
+                      Style="{StaticResource PapasPizzeriaHeaderTextStyle}" 
+                      FontSize="24" Margin="10,5,10,10" 
+                      Foreground="{StaticResource PizzaYellowBrush}"/>
+
+            <!-- Order Items List -->
+            <Border Grid.Row="1" Background="White" 
+                    BorderBrush="{StaticResource CrustBrush}" BorderThickness="2" 
+                    CornerRadius="10" Margin="5" Padding="10">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <ItemsControl ItemsSource="{Binding CurrentOrderFood}" 
+                                     ItemTemplate="{StaticResource OrderItemTemplate}"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Order Summary -->
+            <Border Grid.Row="2" Background="{StaticResource BackgroundBeigeBrush}" 
+                    BorderBrush="{StaticResource CrustBrush}" BorderThickness="2" 
+                    CornerRadius="10" Margin="5" Padding="10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Total -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Total:" 
+                              Style="{StaticResource PapasPizzeriaHeaderTextStyle}" 
+                              FontSize="16"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" 
+                              Text="{Binding OrderTotal, StringFormat='${0:F2}'}" 
+                              Style="{StaticResource PapasPizzeriaHeaderTextStyle}" 
+                              FontSize="16" Foreground="{StaticResource PizzaRedBrush}" 
+                              HorizontalAlignment="Right"/>
+                </Grid>
+            </Border>
+
+            <!-- Order Actions -->
+            <Grid Grid.Row="3" Margin="5,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Style="{StaticResource LogoButtonStyle}" 
+                        Content="Clear Order" Margin="0,0,5,0" 
+                        Command="{Binding ClearOrderCommand}"/>
+
+                <Button Grid.Column="1" Style="{StaticResource LogoButtonStyle}" 
+                        Content="Place Order" Margin="5,0,0,0" 
+                        Command="{Binding PlaceOrderCommand}"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

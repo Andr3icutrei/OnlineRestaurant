@@ -36,7 +36,6 @@ namespace OnlineRestaurant.UI.ViewModel
         private readonly IItemService _itemService;
         private readonly IMenuService _menuService;
         private readonly IMenuItemConfigurationService _menuItemConfigurationService;
-
         public string MenuNameText { get; set; }
         public ObservableCollection<FoodCategory> FoodCategoryItems { get; set; }
         public int SelectedFoodCategoryIndex { get; set; } = -1;
@@ -78,10 +77,23 @@ namespace OnlineRestaurant.UI.ViewModel
             }
         }
 
+        private object _currentView;
+        public object CurrentView
+        {
+            get => _currentView;
+            set
+            {
+                _currentView = value;
+                OnPropertyChanged(nameof(CurrentView));
+            }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ICommand AddMenuCommand { get; set; }
-        public ICommand CancelCommand { get; set; }
+        public ICommand AddMenuCommand { get; }
+        public ICommand CancelCommand { get; }
+        public ICommand SwitchToFoodMenuViewCommand { get; }
+        public ICommand SwitchToOrdersViewCommand { get; }
 
         public UpsertMenuVM(INavigationService navigationService,IItemService itemService,IFoodCategoryService foodCategoryService,
             IMenuService menuService,IMenuItemConfigurationService menuItemConfigurationService)
@@ -142,7 +154,7 @@ namespace OnlineRestaurant.UI.ViewModel
         {
             WindowService ws = new WindowService();
             List<Item> items = new List<Item>();
-            for(int i = 0; i < _selectedItems.Count; i++)
+            for (int i = 0; i < _selectedItems.Count; i++)
             {
                 items.Add(_selectedItems[i].GetOriginalData<Item>());
             }
@@ -152,7 +164,7 @@ namespace OnlineRestaurant.UI.ViewModel
             this,
             async (vm, wasConfirmed) =>
                 {
-                    if(!wasConfirmed)
+                    if (!wasConfirmed)
                         return;
 
                     var viewModel = (VariableTextBoxesVM)vm;
@@ -178,7 +190,7 @@ namespace OnlineRestaurant.UI.ViewModel
                             await _menuItemConfigurationService.AddMenuItemConfigurationAsync(menuItemConfiguration);
                         }
 
-                        MessageBox.Show("Menu added to the database!","Success",MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show("Menu added to the database!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     else
                     {
@@ -188,14 +200,15 @@ namespace OnlineRestaurant.UI.ViewModel
                         await _menuService.UpdateAsync(MenuToUpdate);
 
                         int i = 0;
-                        foreach(MenuItemConfiguration configuration in MenuToUpdate.ItemConfigurations) 
+                        foreach (MenuItemConfiguration configuration in MenuToUpdate.ItemConfigurations)
                         {
                             configuration.ItemId = _selectedItems[i].GetOriginalData<Item>().Id;
                             configuration.MenuId = MenuToUpdate.Id;
                             configuration.MenuPortionQuantity = float.Parse(viewModel.TextFieldItems[i].Value);
                             await _menuItemConfigurationService.UpdateAsync(configuration);
                             i++;
-                        };
+                        }
+                        ;
 
                         MessageBox.Show("Menu modified in the database!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     }

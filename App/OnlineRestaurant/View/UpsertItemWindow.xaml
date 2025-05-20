@@ -68,7 +68,7 @@
             <Label Grid.Row="5" Content="Price:" FontSize="20" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
             <TextBox Grid.Row="5" Text="{Binding PriceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBox_Pasting" Width="196" Height="20" HorizontalAlignment="Left" Margin="5,37,0,0" Grid.RowSpan="3"/>
 
-            <Label Grid.Row="8" Content="Portion quantity:" FontSize="20" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
+            <Label Grid.Row="8" Content="Portion quantity(kg):" FontSize="20" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
             <TextBox Grid.Row="8" Text="{Binding PortionQuantityText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="NumberValidationTextBox" DataObject.Pasting="TextBox_Pasting" Width="195" Height="20" HorizontalAlignment="Left" Margin="5,38,0,0" Grid.RowSpan="3"/>
 
             <Label Grid.Row="11" Content="Total quantity(kg):" FontSize="20" Style="{StaticResource PapasPizzeriaLabelStyle}"/>

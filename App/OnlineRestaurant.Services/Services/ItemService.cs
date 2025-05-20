@@ -38,6 +38,11 @@ namespace OnlineRestaurant.Core.Services
             return await _repository.GetAllAsync();  
         }
 
+        public async Task<IEnumerable<Item>> GetAllItemsWithReferencesAsync()
+        {
+            return await _repository.GetAllItemsWithReferencesAsync();
+        }
+
         public async Task<Item?> GetItemWithReferencesAsync(int id)
         {
             return await _repository.GetItemWithReferencesAsync(id);

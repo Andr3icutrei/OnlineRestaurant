@@ -15,6 +15,6 @@ namespace OnlineRestaurant.Database.Entities
         public Item? Item { get; set; }
 
         // Override for menu-specific portion
-        public float? MenuPortionQuantity { get; set; }
+        public float MenuPortionQuantity { get; set; }
     }
 }

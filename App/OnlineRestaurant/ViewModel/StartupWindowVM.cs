@@ -59,7 +59,7 @@ namespace OnlineRestaurant.UI.ViewModel
             _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
 
             // Initialize commands
-            LoginAsGuestCommand = new RelayCommand(Login_Execute);
+            LoginAsGuestCommand = new RelayCommand(LoginAsGuest_Execute);
             LoginCommand = new RelayCommand(Login_Execute);
             RegisterCommand = new RelayCommand(Register_Execute);
         }
@@ -74,6 +74,11 @@ namespace OnlineRestaurant.UI.ViewModel
         public void Register_Execute()
         {
             _navigationService.NavigateTo<RegisterWindow>();
+        }
+
+        public void LoginAsGuest_Execute()
+        {
+            _navigationService.NavigateTo<GuestWindow>();
         }
         #endregion
 

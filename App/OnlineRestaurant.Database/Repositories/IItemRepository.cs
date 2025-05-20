@@ -10,5 +10,6 @@ namespace OnlineRestaurant.Database.Repositories
     public interface IItemRepository : IBaseRepository<Item>
     {
         Task<Item?> GetItemWithReferencesAsync(int id);
+        Task<IEnumerable<Item>> GetAllItemsWithReferencesAsync();
     }
 }

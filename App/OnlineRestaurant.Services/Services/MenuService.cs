@@ -23,6 +23,11 @@ namespace OnlineRestaurant.Core.Services
             await _menuRepository.SaveChangesAsync();
         }
 
+        public async Task<decimal> CalculateMenuPriceAsync(int id)
+        {
+            return await _menuRepository.CalculateMenuPriceAsync(id);
+        }
+
         public async Task DeleteAsync(int id)
         {
             await _menuRepository.SoftDeleteByIdAsync(id);
@@ -36,6 +41,11 @@ namespace OnlineRestaurant.Core.Services
         public async Task<IEnumerable<Item?>> GetItemsForMenuAsync(int id)
         {
             return await _menuRepository.GetItemsForMenuAsync(id);
+        }
+
+        public async Task<IEnumerable<Menu>?> GetMenusWithReferences()
+        {
+            return await _menuRepository.GetMenusWithReferences();
         }
 
         public async Task<Menu?> GetMenuWithReferencesAsync(int id)

@@ -31,9 +31,9 @@ namespace OnlineRestaurant.Core.Services
             await _itemPictureRepository.SaveChangesAsync();
         }
 
-        public void UpdateItemPicture(ItemPicture itemPicture)
+        public async Task UpdateItemPicture(ItemPicture itemPicture)
         {
-            _itemPictureRepository.Update(itemPicture);
+            await _itemPictureRepository.Update(itemPicture);
         }
     }
 }

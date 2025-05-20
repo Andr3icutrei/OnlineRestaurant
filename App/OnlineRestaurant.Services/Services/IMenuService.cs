@@ -15,5 +15,7 @@ namespace OnlineRestaurant.Core.Services
         Task<IEnumerable<Item?>> GetItemsForMenuAsync(int id);
         Task UpdateAsync(Menu menu);
         Task<Menu?> GetMenuWithReferencesAsync(int id);
+        Task<decimal> CalculateMenuPriceAsync(int id);
+        Task<IEnumerable<Menu>?> GetMenusWithReferences();
     }
 }

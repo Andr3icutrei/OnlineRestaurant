@@ -1,0 +1,110 @@
+﻿<UserControl x:Class="OnlineRestaurant.UI.View.OrdersControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:OnlineRestaurant.UI.View"
+             xmlns:extensions="clr-namespace:OnlineRestaurant.UI.Extensions"
+             xmlns:converters="clr-namespace:OnlineRestaurant.UI.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/View/Resources/PapasButtonStyle.xaml"/>
+                <ResourceDictionary Source="/View/Resources/Background.xaml"/>
+                <ResourceDictionary Source="/View/Resources/FontStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:DynamicPropertyConverter x:Key="DynamicPropertyConverter"/>
+            <converters:RelativeToAbsolutePathConverter x:Key="RelativeToAbsolutePathConverter"/>
+            <converters:ItemQuantityConverter x:Key="ItemQuantityConverter"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Orders Header -->
+        <Border Grid.Row="0" Background="{StaticResource PizzaRedBrush}" 
+                BorderBrush="{StaticResource CrustBrush}" BorderThickness="0,0,0,2" Padding="15,10">
+            <TextBlock Text="Your Order History" FontSize="24" FontWeight="Bold" Foreground="White"/>
+        </Border>
+
+        <!-- Order History List -->
+        <Border Grid.Row="1" Background="{StaticResource PizzaPatternBrush}" 
+                BorderBrush="{StaticResource CrustBrush}" BorderThickness="2" 
+                CornerRadius="10" Margin="10" Padding="15">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Filter Controls -->
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="Filter by Status:" FontWeight="Bold" FontSize="16" 
+                              Foreground="{StaticResource PizzaRedBrush}" VerticalAlignment="Center"/>
+                    <ComboBox Margin="10,0,0,0" Width="150" ItemsSource="{Binding OrderStatusOptions}" 
+                             SelectedItem="{Binding SelectedOrderStatus}" DisplayMemberPath="Name"/>
+                    <Button Style="{StaticResource PepperoniButtonStyle}" Content="Cancel Command"
+                            Width="100" Margin="20,0,0,0"/>
+                </StackPanel>
+
+                <DataGrid Grid.Row="1"
+                     x:Name="DynamicGrid"
+                     ItemsSource="{Binding CurrentGridData}"
+                     AutoGenerateColumns="False"
+                     CanUserAddRows="False"
+                     IsReadOnly="True"
+                     Margin="30,30,30,30"
+                     SelectionMode="Single"
+                     SelectionUnit="FullRow"
+                     SelectedItem="{Binding SelectedRow, Mode=TwoWay}">
+
+                    <DataGrid.Resources>
+                        <!-- Override the default cell style to remove blue selection highlight -->
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+                            <Setter Property="TextBlock.TextTrimming" Value="None"/>
+                            <Setter Property="TextBlock.TextAlignment" Value="Left"/>
+                            <Setter Property="TextBlock.VerticalAlignment" Value="Top"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Margin" Value="20,0,0,0"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, Path=Foreground}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="{x:Type DataGridRow}">
+                            <!-- Default values when not selected -->
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="Background" Value="#FF4040"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                </Trigger>
+                                <!-- Remove the focus visual style -->
+                                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

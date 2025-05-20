@@ -10,7 +10,7 @@ namespace OnlineRestaurant.Core.Services
     public interface IItemPictureService
     {
         List<ItemPicture> GetAll();
-        void UpdateItemPicture(ItemPicture itemPicture);
+        Task UpdateItemPicture(ItemPicture itemPicture);
         Task SaveChangesAsync();
         Task<IEnumerable<ItemPicture>> GetAllAsync();
     }

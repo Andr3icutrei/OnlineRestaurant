@@ -39,6 +39,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Label Grid.Row="0" Content="{Binding AdminNameText}" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
             
@@ -51,6 +52,8 @@
             <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ComboBoxItems}" SelectedItem="{Binding DisplayAllSelectedItem}" Width="90" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
             <RadioButton Grid.Row="4" Command="{Binding DeleteRowCommand}" GroupName="DeleteModifyRBGroup" IsChecked="{Binding IsDeleteChecked,Mode=TwoWay}" Content="Delete row" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Style="{StaticResource PapasPizzeriaRadioButtonStyle}"/>
+
+            <Button Grid.Row="5" Command="{Binding CancelCommand}" Content="Cancel/Exit" Style="{StaticResource PepperoniButtonStyle}" Height="47" HorizontalAlignment="Center" VerticalAlignment="Center" Width="90"/>
         </Grid>
         
         <Grid Grid.Column="1">

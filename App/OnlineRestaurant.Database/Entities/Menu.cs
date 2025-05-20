@@ -17,7 +17,7 @@ namespace OnlineRestaurant.Database.Entities
         public FoodCategory? FoodCategory { get; set; }
 
         //references
-        public ICollection<Order> Orders { get; set; }
+        public ICollection<MenuOrder> Orders { get; set; }
         public ICollection<MenuItemConfiguration> ItemConfigurations { get; set; }
     }
 }

@@ -18,11 +18,10 @@ namespace OnlineRestaurant.Database.Repositories
         {
         }
 
-        public async Task<bool> CanLoginUserAsync(string email, string password,UserType utype)
+        public async Task<User?> CanLoginUserAsync(string email, string password,UserType utype)
         {
-            User? user = await GetRecords().FirstOrDefaultAsync(u => u.Email == email && u.Password == password && 
+            return await GetRecords().FirstOrDefaultAsync(u => u.Email == email && u.Password == password && 
                 u.Type == utype && u.DeletedAt == null);
-            return user != null;
         }
     }
 }

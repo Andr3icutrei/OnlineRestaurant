@@ -11,6 +11,6 @@ namespace OnlineRestaurant.Core.Services
     public interface IUserService
     {
         Task AddUserAsync(User user);
-        Task<bool> CanLoginUserAsync(string Password, string UserName,UserType utype);
+        Task<User?> CanLoginUserAsync(string Password, string UserName,UserType utype);
     }
 }

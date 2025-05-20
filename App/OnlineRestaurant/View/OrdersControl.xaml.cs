@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using OnlineRestaurant.Core.Services;
+using OnlineRestaurant.Database.Entities;
 using OnlineRestaurant.UI.Models;
 using OnlineRestaurant.UI.Services;
 using OnlineRestaurant.UI.ViewModel;
@@ -16,35 +16,36 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace OnlineRestaurant.UI.View
 {
     /// <summary>
-    /// Interaction logic for AdministrationWindow.xaml
+    /// Interaction logic for OrdersUserControl.xaml
     /// </summary>
-    public partial class AdministrationWindow : Window, INavigationAware
+    public partial class OrdersControl : UserControl
     {
-        private readonly AdministrationWindowVM _viewModel;
-        public AdministrationWindow()
+        private OrdersControlVM _viewmodel;
+        public OrdersControl(User user)
         {
             InitializeComponent();
 
             var serviceProvider = ((App)Application.Current).HostInstance.Services;
-            var administrationWindowVM = serviceProvider.GetRequiredService<AdministrationWindowVM>();
+            var ordersControlVM = serviceProvider.GetRequiredService<OrdersControlVM>();
 
-            _viewModel = administrationWindowVM;
-            _viewModel.PropertyChanged += ViewModel_PropertyChanged;
-            DataContext = _viewModel;
+            _viewmodel = ordersControlVM;
+            _viewmodel.PropertyChanged += ViewModel_PropertyChanged;
+            _viewmodel.CurrentUser = user;
 
-            UpdateGridColumns(DynamicGrid, _viewModel.GridColumns);
+            DataContext = _viewmodel;
+            UpdateGridColumns(DynamicGrid, _viewmodel.GridColumns);
         }
-
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(_viewModel.GridColumns))
+            if (e.PropertyName == nameof(_viewmodel.GridColumns))
             {
-                 UpdateGridColumns(DynamicGrid, _viewModel.GridColumns);
+                UpdateGridColumns(DynamicGrid, _viewmodel.GridColumns);
             }
         }
 
@@ -98,14 +99,6 @@ namespace OnlineRestaurant.UI.View
                 }
 
                 grid.Columns.Add(gridColumn);
-            }
-        }
-
-        public void OnNavigatedTo(object parameter)
-        {
-            if(parameter is string adminName)
-            {
-                _viewModel.AdminNameText = adminName;
             }
         }
     }

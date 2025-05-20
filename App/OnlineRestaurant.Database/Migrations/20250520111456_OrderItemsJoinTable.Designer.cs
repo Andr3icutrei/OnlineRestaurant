@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineRestaurant.Database.Context;
 
@@ -11,9 +12,11 @@ using OnlineRestaurant.Database.Context;
 namespace OnlineRestaurant.Database.Migrations
 {
     [DbContext(typeof(OnlineRestaurantDbContext))]
-    partial class OnlineRestaurantDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250520111456_OrderItemsJoinTable")]
+    partial class OrderItemsJoinTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,6 +38,21 @@ namespace OnlineRestaurant.Database.Migrations
                     b.HasIndex("ItemsId");
 
                     b.ToTable("AllergenItem");
+                });
+
+            modelBuilder.Entity("MenuOrder", b =>
+                {
+                    b.Property<int>("MenusId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrdersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MenusId", "OrdersId");
+
+                    b.HasIndex("OrdersId");
+
+                    b.ToTable("MenuOrder");
                 });
 
             modelBuilder.Entity("OnlineRestaurant.Database.Entities.Allergen", b =>
@@ -253,24 +271,6 @@ namespace OnlineRestaurant.Database.Migrations
                     b.ToTable("MenuItemConfigurations");
                 });
 
-            modelBuilder.Entity("OnlineRestaurant.Database.Entities.MenuOrder", b =>
-                {
-                    b.Property<int>("MenusId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrdersId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NoMenus")
-                        .HasColumnType("int");
-
-                    b.HasKey("MenusId", "OrdersId");
-
-                    b.HasIndex("OrdersId");
-
-                    b.ToTable("MenuOrder");
-                });
-
             modelBuilder.Entity("OnlineRestaurant.Database.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -377,6 +377,21 @@ namespace OnlineRestaurant.Database.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MenuOrder", b =>
+                {
+                    b.HasOne("OnlineRestaurant.Database.Entities.Menu", null)
+                        .WithMany()
+                        .HasForeignKey("MenusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OnlineRestaurant.Database.Entities.Order", null)
+                        .WithMany()
+                        .HasForeignKey("OrdersId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("OnlineRestaurant.Database.Entities.Item", b =>
                 {
                     b.HasOne("OnlineRestaurant.Database.Entities.FoodCategory", "FoodCategory")
@@ -443,25 +458,6 @@ namespace OnlineRestaurant.Database.Migrations
                     b.Navigation("Menu");
                 });
 
-            modelBuilder.Entity("OnlineRestaurant.Database.Entities.MenuOrder", b =>
-                {
-                    b.HasOne("OnlineRestaurant.Database.Entities.Menu", "Menu")
-                        .WithMany("Orders")
-                        .HasForeignKey("MenusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("OnlineRestaurant.Database.Entities.Order", "Order")
-                        .WithMany("Menus")
-                        .HasForeignKey("OrdersId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Menu");
-
-                    b.Navigation("Order");
-                });
-
             modelBuilder.Entity("OnlineRestaurant.Database.Entities.Order", b =>
                 {
                     b.HasOne("OnlineRestaurant.Database.Entities.User", "User")
@@ -491,15 +487,11 @@ namespace OnlineRestaurant.Database.Migrations
             modelBuilder.Entity("OnlineRestaurant.Database.Entities.Menu", b =>
                 {
                     b.Navigation("ItemConfigurations");
-
-                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("OnlineRestaurant.Database.Entities.Order", b =>
                 {
                     b.Navigation("Items");
-
-                    b.Navigation("Menus");
                 });
 
             modelBuilder.Entity("OnlineRestaurant.Database.Entities.User", b =>

@@ -309,8 +309,7 @@ namespace OnlineRestaurant.UI.ViewModel
                     {
                         ItemPicture ip = itemPicture.GetOriginalData<ItemPicture>();
                         ip.ItemId = i.Id;
-                        _itemPictureService.UpdateItemPicture(ip);
-                        await _itemPictureService.SaveChangesAsync();
+                        await _itemPictureService.UpdateItemPicture(ip);
                     }
 
                     MessageBox.Show("Item added in the database!","Success",MessageBoxButton.OK,MessageBoxImage.Information);

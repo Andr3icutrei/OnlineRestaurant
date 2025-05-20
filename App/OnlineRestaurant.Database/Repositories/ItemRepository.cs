@@ -16,10 +16,21 @@ namespace OnlineRestaurant.Database.Repositories
             
         }
 
+        public async Task<IEnumerable<Item>> GetAllItemsWithReferencesAsync()
+        {
+            return await _databaseContext.Items.Where(i => i.DeletedAt == null).
+                                                Include(i => i.Pictures).
+                                                Include(i => i.Allergens).
+                                                Include(i => i.FoodCategory).
+                                                ToListAsync();
+        }
+
         public async Task<Item?> GetItemWithReferencesAsync(int id)
         {
             return await _databaseContext.Items.Include(i => i.Pictures).Include(i => i.Allergens).Include(i => i.FoodCategory).
-                FirstOrDefaultAsync(i => i.Id == id);
+                FirstOrDefaultAsync(i => i.Id == id && i.DeletedAt == null);
         }
+
+
     }
 }

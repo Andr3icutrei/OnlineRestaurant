@@ -38,6 +38,32 @@ namespace OnlineRestaurant.Database.Context
             modelBuilder.Entity<Allergen>()
                 .HasIndex(a => a.Type)
                 .IsUnique();
+
+            modelBuilder.Entity<ItemOrder>()
+                .HasKey(io => new { io.ItemsId, io.OrdersId });
+
+            modelBuilder.Entity<ItemOrder>()
+                .HasOne(io => io.Item)
+                .WithMany(i => i.Orders)
+                .HasForeignKey(io => io.ItemsId);
+
+            modelBuilder.Entity<ItemOrder>()
+                .HasOne(io => io.Order)
+                .WithMany(o => o.Items)
+                .HasForeignKey(io => io.OrdersId);
+
+            modelBuilder.Entity<MenuOrder>()
+                .HasKey(io => new { io.MenusId, io.OrdersId });
+
+            modelBuilder.Entity<MenuOrder>()
+                .HasOne(mo => mo.Menu)
+                .WithMany(i => i.Orders)
+                .HasForeignKey(io => io.MenusId);
+
+            modelBuilder.Entity<MenuOrder>()
+                .HasOne(mo => mo.Order)
+                .WithMany(o => o.Menus)
+                .HasForeignKey(io => io.OrdersId);
         }
 
         public DbSet<Allergen> Allergens { get; set; }
@@ -48,5 +74,7 @@ namespace OnlineRestaurant.Database.Context
         public DbSet<Order> Orders { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<MenuItemConfiguration> MenuItemConfigurations { get; set; }
+        public DbSet<ItemOrder> ItemOrder { get; set; }
+        public DbSet<MenuOrder> MenuOrder { get; set; } 
      }
 }

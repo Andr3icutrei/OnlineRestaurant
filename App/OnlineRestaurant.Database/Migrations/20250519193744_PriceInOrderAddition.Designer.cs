@@ -12,8 +12,8 @@ using OnlineRestaurant.Database.Context;
 namespace OnlineRestaurant.Database.Migrations
 {
     [DbContext(typeof(OnlineRestaurantDbContext))]
-    [Migration("20250516132148_RevertSoftDeletion")]
-    partial class RevertSoftDeletion
+    [Migration("20250519193744_PriceInOrderAddition")]
+    partial class PriceInOrderAddition
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -284,6 +284,9 @@ namespace OnlineRestaurant.Database.Migrations
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("State")
                         .HasColumnType("int");
