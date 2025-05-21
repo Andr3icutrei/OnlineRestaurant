@@ -68,6 +68,7 @@ namespace OnlineRestaurant.UI.View
                     binding.StringFormat = columnDef.StringFormat;
                 }
 
+                // Create the appropriate column type based on data type
                 DataGridColumn gridColumn;
 
                 if (columnDef.DataType == typeof(bool))

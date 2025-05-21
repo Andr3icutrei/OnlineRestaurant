@@ -53,9 +53,9 @@
                 <Button Style="{StaticResource ChefHatButtonStyle}" Content="Food Menu" 
                         Width="100" Height="50"
                         Command="{Binding SwitchToFoodMenuViewCommand}"/>
-                <Button Style="{StaticResource ChefHatButtonStyle}" Content="Exit" 
+                <Button Style="{StaticResource ChefHatButtonStyle}" Content="Cancel" 
                         Width="100" Height="50"
-                        Command="{Binding ExitCommand}"/>
+                        Command="{Binding CancelCommand}"/>
             </StackPanel>
         </Grid>
 

@@ -27,12 +27,13 @@ namespace OnlineRestaurant.UI.ViewModel
 
         private readonly INavigationService _navigationService;
         private readonly IUserService _userService;
-
+        private readonly INavigationServiceAsync _navigationServiceAsync;
         public ObservableCollection<string> UserTypesItems { get; set; }
 
-        public LoginWindowVM(INavigationService navigationService,IUserService userService)
+        public LoginWindowVM(INavigationService navigationService,INavigationServiceAsync navigationServiceAsync, IUserService userService)
         {
             _navigationService = navigationService;
+            _navigationServiceAsync = navigationServiceAsync;
             _userService = userService;
 
             LoginCommand = new AsyncRelayCommand(Login_Execute, Login_CanExecute);
@@ -43,20 +44,22 @@ namespace OnlineRestaurant.UI.ViewModel
         {
             User user = null;
             if (IsAdminChecked)
-                user = await _userService.CanLoginUserAsync(EmailText, PasswordText,UserType.Admin);
-            else if(IsUserChecked)
+                user = await _userService.CanLoginUserAsync(EmailText, PasswordText, UserType.Admin);
+            else if (IsUserChecked)
                 user = await _userService.CanLoginUserAsync(EmailText, PasswordText, UserType.Registered);
 
             if (user != null)
             {
-                if(IsAdminChecked)
+                if (IsAdminChecked)
                     _navigationService.NavigateTo<AdministrationWindow>();
-                else if(IsUserChecked)
-                    _navigationService.NavigateTo<UserWindow>(user);
-            }
-            else
-            {
-                MessageBox.Show("This user does not exist in the database", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                else if (IsUserChecked)
+                {
+                    _navigationServiceAsync.NavigateToAsync<UserWindow>(user);
+                }
+                else
+                {
+                    MessageBox.Show("This user does not exist in the database", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

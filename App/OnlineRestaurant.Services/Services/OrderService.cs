@@ -47,5 +47,20 @@ namespace OnlineRestaurant.Core.Services
         {
             return _orderRepository.GetAllWithReferences();
         }
+
+        public IEnumerable<Order> GetAllWithReferencesAsc()
+        {
+            return (_orderRepository.GetAllWithReferencesAsc());
+        }
+
+        public IEnumerable<Order> GetAllWithReferencesDesc()
+        {
+            return (_orderRepository.GetAllWithReferencesDesc());
+        }
+
+        public async Task Update(Order order)
+        {
+            await _orderRepository.Update(order);
+        }
     }
 }

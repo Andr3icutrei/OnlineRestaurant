@@ -10,6 +10,8 @@ namespace OnlineRestaurant.Database.Repositories
     public interface IOrderRepository : IBaseRepository<Order>
     {
         IEnumerable<Order> GetAllWithReferences();
+        IEnumerable<Order> GetAllWithReferencesAsc();
+        IEnumerable<Order> GetAllWithReferencesDesc();
         IEnumerable<Item> GetAllItems(int orderId);
         IEnumerable<Menu> GetAllMenus(int orderId);
         IEnumerable<int> GetAllItemQuantities(int orderId);

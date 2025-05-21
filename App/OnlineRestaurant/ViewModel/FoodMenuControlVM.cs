@@ -2,36 +2,44 @@
 using OnlineRestaurant.Database.Entities;
 using OnlineRestaurant.UI.Models;
 using OnlineRestaurant.UI.Services;
-using OnlineRestaurant.UI.View;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows;
-using System.Threading.Tasks;
 
 namespace OnlineRestaurant.UI.ViewModel
 {
-    public class UserWindowVM : INotifyPropertyChanged
+    public class FoodMenuControlVM: INotifyPropertyChanged
     {
         #region Private Fields
         private readonly IItemService _itemService;
         private readonly IOrderService _orderService;
         private readonly IMenuService _menuService;
-        private readonly INavigationService _navigationService;
 
         private ICollectionView _groupedItems;
         private ObservableCollection<Item> _availableItems;
         private Dictionary<int, int> _itemQuantities = new Dictionary<int, int>();
         private Dictionary<int, int> _menuQuantities = new Dictionary<int, int>();
         private User _currentUser;
+
         private decimal _orderTotal = 0;
         private ObservableCollection<OrderDisplay> _currentOrderfood = new ObservableCollection<OrderDisplay>();
 
-        // View switching fields
-        private object _currentView;
+        // Search properties
+        private string _itemNameSearchText = "";
+        private string _itemAllergenSearchText = "";
+        private string _menuSearchText = "";
+        private bool _isItemNameExcluded = false;
+        private bool _isItemAllergenExcluded = false;
+        private bool _isMenuNameExcluded = false;
         #endregion
 
         #region Properties
@@ -78,12 +86,63 @@ namespace OnlineRestaurant.UI.ViewModel
             }
         }
 
-        public object CurrentView
+        // Search properties with notification
+        public string ItemNameSearchText
         {
-            get => _currentView;
+            get { return _itemNameSearchText; }
             set
             {
-                _currentView = value;
+                _itemNameSearchText = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string ItemAllergenSearchText
+        {
+            get { return _itemAllergenSearchText; }
+            set
+            {
+                _itemAllergenSearchText = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string MenuSearchText
+        {
+            get { return _menuSearchText; }
+            set
+            {
+                _menuSearchText = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsItemNameExcluded
+        {
+            get { return _isItemNameExcluded; }
+            set
+            {
+                _isItemNameExcluded = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsItemAllergenExcluded
+        {
+            get { return _isItemAllergenExcluded; }
+            set
+            {
+                _isItemAllergenExcluded = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsMenuNameExcluded
+        {
+            get { return _isMenuNameExcluded; }
+            set
+            {
+                _isMenuNameExcluded = value;
                 OnPropertyChanged();
             }
         }
@@ -94,20 +153,15 @@ namespace OnlineRestaurant.UI.ViewModel
         public ICommand DecrementCommand { get; }
         public ICommand PlaceOrderCommand { get; }
         public ICommand ClearOrderCommand { get; }
-        public ICommand CancelCommand { get; }
-
-        // View switching commands
-        public ICommand SwitchToFoodMenuViewCommand { get; }
-        public ICommand SwitchToOrdersViewCommand { get; }
+        public ICommand SearchItemsCommand { get; }
+        public ICommand SearchMenusCommand { get; }
         #endregion
 
-        public UserWindowVM(IItemService itemService, IMenuService menuService, IOrderService orderService,
-            INavigationService navigationService)
+        public FoodMenuControlVM(IItemService itemService, IMenuService menuService, IOrderService orderService)
         {
             _itemService = itemService;
             _orderService = orderService;
             _menuService = menuService;
-            _navigationService = navigationService;
 
             IncrementCommand = new RelayCommandWithParameter(
                 param =>
@@ -141,19 +195,18 @@ namespace OnlineRestaurant.UI.ViewModel
 
             PlaceOrderCommand = new AsyncRelayCommand(PlaceOrder, CanPlaceOrder);
             ClearOrderCommand = new RelayCommand(ClearOrder);
-            CancelCommand = new RelayCommand(Cancel_Execute);
-
-            SwitchToFoodMenuViewCommand = new AsyncRelayCommand(SwitchToFoodMenuView);
-            SwitchToOrdersViewCommand = new RelayCommand(SwitchToOrdersView);
+            SearchItemsCommand = new AsyncRelayCommand(SearchItems);
+            SearchMenusCommand = new AsyncRelayCommand(SearchMenus);
 
             AvailableItems = new ObservableCollection<Item>();
             AvailableMenus = new ObservableCollection<OnlineRestaurant.Database.Entities.Menu>();
         }
 
-        public async Task ConfigureInit(User user)
+        private async Task InitializeAsync()
         {
-            _currentUser = user;
-            await SwitchToFoodMenuView();
+            await LoadItemsAsync();
+            await LoadMenusAsync();
+            UpdateGroupedItems();
         }
 
         public async Task LoadItemsAsync()
@@ -195,7 +248,7 @@ namespace OnlineRestaurant.UI.ViewModel
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error loading items: {ex.Message}");
+                Debug.WriteLine($"Error loading menus: {ex.Message}");
             }
         }
 
@@ -227,14 +280,11 @@ namespace OnlineRestaurant.UI.ViewModel
                 if (itemToUpdate != null)
                 {
                     itemToUpdate.Quantity++;
+                    itemToUpdate.TotalPrice = itemToUpdate.UnitPrice * itemToUpdate.Quantity;
                     OrderTotal += itemToUpdate.UnitPrice;
                 }
 
                 OnPropertyChanged(nameof(CurrentOrderFood));
-            }
-            foreach (var quantity in _itemQuantities)
-            {
-                Debug.Print($"item {quantity.Key}: quantity {quantity.Value}");
             }
         }
 
@@ -264,14 +314,11 @@ namespace OnlineRestaurant.UI.ViewModel
                 if (itemToUpdate != null)
                 {
                     itemToUpdate.Quantity--;
+                    itemToUpdate.TotalPrice = itemToUpdate.UnitPrice * itemToUpdate.Quantity;
                     OrderTotal -= itemToUpdate.UnitPrice;
                 }
 
                 OnPropertyChanged(nameof(CurrentOrderFood));
-            }
-            foreach (var quantity in _itemQuantities)
-            {
-                Debug.Print($"item {quantity.Key}: quantity {quantity.Value}");
             }
         }
 
@@ -303,6 +350,7 @@ namespace OnlineRestaurant.UI.ViewModel
                 if (menuToUpdate != null)
                 {
                     menuToUpdate.Quantity++;
+                    menuToUpdate.TotalPrice = menuToUpdate.UnitPrice * menuToUpdate.Quantity;
                     OrderTotal += menuToUpdate.UnitPrice;
                 }
 
@@ -336,6 +384,7 @@ namespace OnlineRestaurant.UI.ViewModel
                 if (menuToUpdate != null)
                 {
                     menuToUpdate.Quantity--;
+                    menuToUpdate.TotalPrice = menuToUpdate.UnitPrice * menuToUpdate.Quantity;
                     OrderTotal -= menuToUpdate.UnitPrice;
                 }
 
@@ -350,6 +399,12 @@ namespace OnlineRestaurant.UI.ViewModel
 
         private async Task PlaceOrder()
         {
+            if (_currentUser == null)
+            {
+                MessageBox.Show("No user is set. Cannot place order.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             var order = new Order
             {
                 State = Database.Enums.OrderState.Registered,
@@ -391,8 +446,12 @@ namespace OnlineRestaurant.UI.ViewModel
                 "Order Confirmation", MessageBoxButton.OK, MessageBoxImage.Information);
 
             ClearOrder();
+        }
 
-            SwitchToOrdersView();
+        public async Task SetUser(User user)
+        {
+            _currentUser = user;
+            await InitializeAsync();
         }
 
         private void ClearOrder()
@@ -406,40 +465,82 @@ namespace OnlineRestaurant.UI.ViewModel
 
         private void UpdateGroupedItems()
         {
+            if (AvailableItems == null)
+                return;
+
             var cvs = new CollectionViewSource { Source = AvailableItems };
             GroupedItems = cvs.View;
 
-            GroupedItems.GroupDescriptions.Add(new PropertyGroupDescription("FoodCategory.Type"));
-            GroupedItems.SortDescriptions.Add(new SortDescription("FoodCategory.Type", ListSortDirection.Ascending));
+            if (GroupedItems.GroupDescriptions.Count == 0)
+            {
+                GroupedItems.GroupDescriptions.Add(new PropertyGroupDescription("FoodCategory.Type"));
+                GroupedItems.SortDescriptions.Add(new SortDescription("FoodCategory.Type", ListSortDirection.Ascending));
+            }
         }
 
-        #region View Switching Methods
-        private async Task SwitchToFoodMenuView()
+        #region Search Methods
+        public async Task SearchItems()
         {
-            var foodMenuControl = new FoodMenuControl();
-            await foodMenuControl.OnNavigatedTo(_currentUser);
+            if (AvailableItems == null)
+                return;
 
-            CurrentView = foodMenuControl;
+            var originalItems = new List<Item>(await _itemService.GetAllItemsWithReferencesAsync());
+            AvailableItems.Clear();
+
+            if (!string.IsNullOrWhiteSpace(ItemNameSearchText))
+            {
+                var nameFiltered = IsItemNameExcluded
+                    ? originalItems.Where(i => !i.Name.Contains(ItemNameSearchText, StringComparison.OrdinalIgnoreCase))
+                    : originalItems.Where(i => i.Name.Contains(ItemNameSearchText, StringComparison.OrdinalIgnoreCase));
+                originalItems = nameFiltered.ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(ItemAllergenSearchText))
+            {
+                var allergenFiltered = IsItemAllergenExcluded
+                    ? originalItems.Where(i => !i.Allergens.Any(a => a.Type.Contains(ItemAllergenSearchText, StringComparison.OrdinalIgnoreCase)))
+                    : originalItems.Where(i => i.Allergens.Any(a => a.Type.Contains(ItemAllergenSearchText, StringComparison.OrdinalIgnoreCase)));
+                originalItems = allergenFiltered.ToList();
+            }
+
+            foreach (var item in originalItems)
+            {
+                AvailableItems.Add(item);
+            }
+
+            UpdateGroupedItems();
         }
 
-        private void SwitchToOrdersView()
+        public async Task SearchMenus()
         {
-            OrdersControl ordersControl = new OrdersControl(_currentUser);
+            if (AvailableMenus == null)
+                return;
 
-            CurrentView = ordersControl;
-        }
+            var originalMenus = new List<OnlineRestaurant.Database.Entities.Menu>(await _menuService.GetMenusWithReferences());
+            AvailableMenus.Clear();
 
-        private void Cancel_Execute()
-        {
-            _navigationService.NavigateTo<StartupWindow>();
+            if (!string.IsNullOrWhiteSpace(MenuSearchText))
+            {
+                var nameFiltered = IsMenuNameExcluded
+                    ? originalMenus.Where(m => !m.Name.Contains(MenuSearchText, StringComparison.OrdinalIgnoreCase))
+                    : originalMenus.Where(m => m.Name.Contains(MenuSearchText, StringComparison.OrdinalIgnoreCase));
+                originalMenus = nameFiltered.ToList();
+            }
+
+            foreach (var menu in originalMenus)
+            {
+                AvailableMenus.Add(menu);
+            }
         }
         #endregion
 
+        #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion
     }
 }

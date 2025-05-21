@@ -30,6 +30,7 @@ namespace OnlineRestaurant.UI.ViewModel
         public ICommand DeleteRowCommand {  get; }
         public ICommand ModifyRowCommand { get; }
         public ICommand CancelCommand { get; }
+        public ICommand DisplayOrdersCommand { get; }
         #endregion
 
         #region CanCheckModifyAndDelete
@@ -45,6 +46,7 @@ namespace OnlineRestaurant.UI.ViewModel
         public string DeleteSelectedItem { get; set; } = null;
         public string DisplayAllSelectedItem { get; set; } = null;
         public string AdminNameText { get; set; }
+        public string SelectedDisplayOrdersFilter { get; set; }
         #endregion
 
         public IEnumerable<KeyValuePair<string, GridColumnDefinition>> GridColumns => _currentColumns;
@@ -68,17 +70,19 @@ namespace OnlineRestaurant.UI.ViewModel
         private readonly IMenuService _menuService;
         private readonly IAllergenService _allergenService;
         private readonly IFoodCategoryService _foodCategoryService;
+        private readonly IOrderService _orderService;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public AdministrationWindowVM(INavigationService navigationService, IAllergenService allergenService,
-            IItemService itemService,IMenuService menuService, IFoodCategoryService foodCategoryService)
+            IItemService itemService,IMenuService menuService, IFoodCategoryService foodCategoryService,IOrderService orderService)
         {
             _itemService = itemService;
             _menuService = menuService;
             _foodCategoryService = foodCategoryService;
             _allergenService = allergenService;
             _navigationService = navigationService;
+            _orderService = orderService;
 
             _currentColumns = new Dictionary<string, GridColumnDefinition>();
 
@@ -89,6 +93,7 @@ namespace OnlineRestaurant.UI.ViewModel
             DeleteRowCommand = new AsyncRelayCommand(Delete_Execute, Delete_CanExecute);
             ModifyRowCommand = new AsyncRelayCommand(Modify_Execute, Modify_CanExecute);
             CancelCommand = new RelayCommand(Cancel_Execute);
+            DisplayOrdersCommand = new RelayCommand(DisplayOrders_Execute,DisplayOrders_CanExecute);
 
             ComboBoxItems = new ObservableCollection<string>()
             {
@@ -246,6 +251,78 @@ namespace OnlineRestaurant.UI.ViewModel
                 OnPropertyChanged(nameof(GridColumns));
                 OnPropertyChanged(nameof(CurrentGridData));
             });
+        }
+
+        public void DisplayOrders_Execute()
+        {
+            List<Order> orders;
+            if (SelectedDisplayOrdersFilter == "Ascending by date")
+            {
+                orders = new List<Order>(_orderService.GetAllWithReferencesAsc());
+            }
+            else
+            {
+                orders = new List<Order>(_orderService.GetAllWithReferencesDesc());
+            }
+
+            CurrentGridData.Clear();
+
+            List<string> itemsDescription = new List<string>();
+            List<string> menusDescription = new List<string>();
+
+            foreach (Order order in orders)
+            {
+                var itemNames = _orderService.GetAllItems(order.Id).Select(item => item.Name).ToList();
+                var itemsQuantities = _orderService.GetAllItemQuantities(order.Id).ToList();
+
+                var menuNames = _orderService.GetAllMenus(order.Id).Select(menu => menu.Name).ToList();
+                var menusQuantities = _orderService.GetAllMenuQuantities(order.Id).ToList();
+
+                var itemDisplayList = itemNames.Zip(itemsQuantities, (name, qty) => $"{name} x{qty}");
+                var menuDisplayList = menuNames.Zip(menusQuantities, (name, qty) => $"{name} x{qty}");
+
+                string itemsString = string.Join(", ", itemDisplayList);
+                string menusString = string.Join(", ", menuDisplayList);
+
+                itemsDescription.Add(itemsString);
+                menusDescription.Add(menusString);
+            }
+
+            List<OrderDisplayDataGrid> orderDisplays = new List<OrderDisplayDataGrid>();
+            for (int i = 0; i < orders.Count; i++)
+            {
+                orderDisplays.Add(new OrderDisplayDataGrid{
+                   Id = orders[i].Id,
+                    Price = orders[i].Price,
+                    State = orders[i].State,
+                    ItemDescription = itemsDescription[i],
+                    MenuDescription = menusDescription[i],
+                    CreatedAt = orders[i].CreatedAt.ToString()
+                });
+            }
+
+            _currentColumns = new Dictionary<string, GridColumnDefinition>
+            {
+                ["Id"] = new GridColumnDefinition("Order Id", "Id", typeof(int)),
+                ["Price"] = new GridColumnDefinition("Price", "Price", typeof(decimal)),
+                ["State"] = new GridColumnDefinition("State", "State", typeof(OrderState)),
+                ["Items"] = new GridColumnDefinition("Items", "ItemDescription", typeof(string)),
+                ["Menus"] = new GridColumnDefinition("Menus", "MenuDescription", typeof(string)),
+                ["OrderPlaceDate"] = new GridColumnDefinition("Order place date", "CreatedAt",typeof(string))
+            };
+
+            foreach (OrderDisplayDataGrid orderDisplay in orderDisplays)
+            {
+                CurrentGridData.Add(new DataRowVM(orderDisplay, _currentColumns));
+            }
+
+            OnPropertyChanged(nameof(GridColumns));
+            OnPropertyChanged(nameof(CurrentGridData));
+        }
+
+        public bool DisplayOrders_CanExecute()
+        {
+            return SelectedDisplayOrdersFilter != null;
         }
 
         public bool Insert_CanExecute()

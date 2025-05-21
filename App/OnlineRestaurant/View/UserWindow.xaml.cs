@@ -6,6 +6,7 @@ using OnlineRestaurant.UI.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,7 +23,7 @@ namespace OnlineRestaurant.UI.View
     /// <summary>
     /// Interaction logic for UserWindow.xaml
     /// </summary>
-    public partial class UserWindow : Window, INavigationAware
+    public partial class UserWindow : Window, INavigationAwareAsync
     {
         private UserWindowVM _viewmodel;
         public UserWindow()
@@ -35,11 +36,11 @@ namespace OnlineRestaurant.UI.View
             DataContext = _viewmodel;
         }
 
-        public void OnNavigatedTo(object parameter)
+        public async Task OnNavigatedToAsync(object parameter)
         {
             if(parameter is User user)
             {
-                _viewmodel.ConfigureInit(user);
+                await _viewmodel.ConfigureInit(user);
             }
         }
     }

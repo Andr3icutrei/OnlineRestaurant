@@ -8,7 +8,7 @@
         xmlns:converters="clr-namespace:OnlineRestaurant.UI.Converters"
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="AdministrationWindow" Height="450" Width="800">
+        Title="AdministrationWindow" Height="550" Width="1000">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -40,6 +40,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Label Grid.Row="0" Content="{Binding AdminNameText}" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
             
@@ -53,7 +54,14 @@
 
             <RadioButton Grid.Row="4" Command="{Binding DeleteRowCommand}" GroupName="DeleteModifyRBGroup" IsChecked="{Binding IsDeleteChecked,Mode=TwoWay}" Content="Delete row" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Style="{StaticResource PapasPizzeriaRadioButtonStyle}"/>
 
-            <Button Grid.Row="5" Command="{Binding CancelCommand}" Content="Cancel/Exit" Style="{StaticResource PepperoniButtonStyle}" Height="47" HorizontalAlignment="Center" VerticalAlignment="Center" Width="90"/>
+            <Button Grid.Row="5" Command="{Binding DisplayOrdersCommand}" Content="Display orders" Style="{StaticResource ChefHatButtonStyle}" Height="47" HorizontalAlignment="Center" VerticalAlignment="Center" Width="90"/>
+            <ComboBox Grid.Row="5" Grid.Column="1"   SelectedValue="{Binding SelectedDisplayOrdersFilter}" 
+                 SelectedValuePath="Content" Width="90" Height="25">
+                <ComboBoxItem Content="Ascending by date"/>
+                <ComboBoxItem Content="Descending by date"/>
+            </ComboBox>
+            <Button Grid.Row="6" Command="{Binding CancelCommand}" Content="Cancel/Exit" Style="{StaticResource PepperoniButtonStyle}" Height="47" HorizontalAlignment="Center" VerticalAlignment="Center" Width="90"/>
+        
         </Grid>
         
         <Grid Grid.Column="1">
@@ -64,7 +72,6 @@
             CanUserAddRows="False"
             IsReadOnly="True"
             Margin="30,30,30,30"
-            ColumnWidth="155"
             SelectionMode="Single"
             SelectionUnit="FullRow"
             SelectedItem="{Binding SelectedRow, Mode=TwoWay}">
@@ -72,10 +79,15 @@
                 <DataGrid.Resources>
                         <!-- Override the default cell style to remove blue selection highlight -->
                         <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="BorderBrush" Value="Transparent"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Style.Triggers>
+                        <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+                        <Setter Property="TextBlock.TextTrimming" Value="None"/>
+                        <Setter Property="TextBlock.TextAlignment" Value="Left"/>
+                        <Setter Property="TextBlock.VerticalAlignment" Value="Top"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Margin" Value="20,0,0,0"/>
+                        <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="Background" Value="Transparent"/>
                                     <Setter Property="BorderBrush" Value="Transparent"/>

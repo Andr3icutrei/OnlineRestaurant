@@ -11,5 +11,6 @@ namespace OnlineRestaurant.Database.Repositories
     {
         Task<Item?> GetItemWithReferencesAsync(int id);
         Task<IEnumerable<Item>> GetAllItemsWithReferencesAsync();
+        IEnumerable<Item> GetAllItemsWithReferences();
     }
 }

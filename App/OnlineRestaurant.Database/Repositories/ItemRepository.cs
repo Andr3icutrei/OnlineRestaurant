@@ -16,6 +16,15 @@ namespace OnlineRestaurant.Database.Repositories
             
         }
 
+        public IEnumerable<Item> GetAllItemsWithReferences()
+        {
+            return _databaseContext.Items.Where(i => i.DeletedAt == null).
+                                    Include(i => i.Pictures).
+                                    Include(i => i.Allergens).
+                                    Include(i => i.FoodCategory).
+                                    ToList();
+        }
+
         public async Task<IEnumerable<Item>> GetAllItemsWithReferencesAsync()
         {
             return await _databaseContext.Items.Where(i => i.DeletedAt == null).

@@ -46,12 +46,9 @@
 
                 <!-- Filter Controls -->
                 <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                    <TextBlock Text="Filter by Status:" FontWeight="Bold" FontSize="16" 
-                              Foreground="{StaticResource PizzaRedBrush}" VerticalAlignment="Center"/>
-                    <ComboBox Margin="10,0,0,0" Width="150" ItemsSource="{Binding OrderStatusOptions}" 
-                             SelectedItem="{Binding SelectedOrderStatus}" DisplayMemberPath="Name"/>
                     <Button Style="{StaticResource PepperoniButtonStyle}" Content="Cancel Command"
-                            Width="100" Margin="20,0,0,0"/>
+                            Width="100" Margin="20,0,0,0"
+                            Command="{Binding CancelOrderCommand}"/>
                 </StackPanel>
 
                 <DataGrid Grid.Row="1"

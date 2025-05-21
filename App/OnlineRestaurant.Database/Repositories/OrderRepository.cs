@@ -56,5 +56,21 @@ namespace OnlineRestaurant.Database.Repositories
                                            OrderBy(o => o.Id).
                                            ToList();
         }
+
+        public IEnumerable<Order> GetAllWithReferencesAsc()
+        {
+            return _databaseContext.Orders.Include(o => o.Menus)
+                                          .Include(o => o.Items)
+                                          .OrderBy(o => o.CreatedAt)
+                                          .ToList();
+        }
+
+        public IEnumerable<Order> GetAllWithReferencesDesc()
+        {
+            return _databaseContext.Orders.Include(o => o.Menus)
+                              .Include(o => o.Items)
+                              .OrderByDescending(o => o.CreatedAt)
+                              .ToList();
+        }
     }
 }

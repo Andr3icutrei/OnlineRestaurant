@@ -10,19 +10,11 @@ namespace OnlineRestaurant.UI.Models
 {
     public class OrderDisplayDataGrid
     {
-        public int Id { get; }
-        public decimal Price { get; }
-        public OrderState State { get; }
-        public string ItemDescription { get; }
-        public string MenuDescription { get; }
-
-        public OrderDisplayDataGrid(int id,decimal price,OrderState state, string itemDescription, string menuDescription)
-        {
-            Id = id;
-            Price = price;
-            State = state;
-            ItemDescription = itemDescription;
-            MenuDescription = menuDescription;
-        }
+        public int Id { get; set; }
+        public decimal Price { get; set; }
+        public OrderState State { get; set; }
+        public string ItemDescription { get; set; }
+        public string MenuDescription { get; set; }
+        public string CreatedAt { get; set; }
     }
 }

@@ -213,10 +213,8 @@ namespace OnlineRestaurant.UI.ViewModel
             GroupedItems.SortDescriptions.Add(new SortDescription("FoodCategory.Type", ListSortDirection.Ascending));
         }
 
-        // Enhanced search methods for items
         public void SearchItems()
         {
-            // If both search fields are empty, restore all items
             if (string.IsNullOrWhiteSpace(ItemNameSearchText) && string.IsNullOrWhiteSpace(ItemAllergenSearchText))
             {
                 RestoreAllItems();
@@ -225,7 +223,6 @@ namespace OnlineRestaurant.UI.ViewModel
 
             IEnumerable<Item> filteredItems = _originalItems;
 
-            // Apply name filter if provided
             if (!string.IsNullOrWhiteSpace(ItemNameSearchText))
             {
                 filteredItems = IsItemNameExcluded
@@ -233,7 +230,6 @@ namespace OnlineRestaurant.UI.ViewModel
                     : filteredItems.Where(item => item.Name.Contains(ItemNameSearchText, StringComparison.OrdinalIgnoreCase));
             }
 
-            // Apply allergen filter if provided
             if (!string.IsNullOrWhiteSpace(ItemAllergenSearchText))
             {
                 filteredItems = IsItemAllergenExcluded
@@ -241,11 +237,9 @@ namespace OnlineRestaurant.UI.ViewModel
                     : filteredItems.Where(item => item.Allergens.Any(a => a.Type.Contains(ItemAllergenSearchText, StringComparison.OrdinalIgnoreCase)));
             }
 
-            // Update available items
             UpdateAvailableItems(filteredItems);
         }
 
-        // Enhanced search method for menus
         public void SearchMenus()
         {
             if (string.IsNullOrWhiteSpace(MenuSearchText))
@@ -254,18 +248,15 @@ namespace OnlineRestaurant.UI.ViewModel
                 return;
             }
 
-            // Filter menus based on search text and NOT option
             var filteredMenus = IsMenuNameExcluded
                 ? _originalMenus.Where(menu => !menu.Name.Contains(MenuSearchText, StringComparison.OrdinalIgnoreCase) &&
                                               !menu.ItemConfigurations.Any(ic => ic.Item.Name.Contains(MenuSearchText, StringComparison.OrdinalIgnoreCase)))
                 : _originalMenus.Where(menu => menu.Name.Contains(MenuSearchText, StringComparison.OrdinalIgnoreCase) ||
                                               menu.ItemConfigurations.Any(ic => ic.Item.Name.Contains(MenuSearchText, StringComparison.OrdinalIgnoreCase)));
 
-            // Update available menus
             UpdateAvailableMenus(filteredMenus);
         }
 
-        // Helper methods for updating collections
         private void RestoreAllItems()
         {
             AvailableItems.Clear();

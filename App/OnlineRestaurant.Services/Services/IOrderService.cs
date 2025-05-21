@@ -11,9 +11,12 @@ namespace OnlineRestaurant.Core.Services
     {
         Task AddOrder(Order order);
         IEnumerable<Order> GetAllWithReferences();
+        IEnumerable<Order> GetAllWithReferencesAsc();
+        IEnumerable<Order> GetAllWithReferencesDesc();
         IEnumerable<Item> GetAllItems(int orderId);
         IEnumerable<Menu> GetAllMenus(int orderId);
         IEnumerable<int> GetAllItemQuantities(int orderId);
         IEnumerable<int> GetAllMenuQuantities(int orderId);
+        Task Update(Order order);
     }
 }

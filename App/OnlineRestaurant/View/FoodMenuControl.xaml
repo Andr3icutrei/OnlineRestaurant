@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="OnlineRestaurant.UI.View.FoodMenuUserControl"
+﻿<UserControl x:Class="OnlineRestaurant.UI.View.FoodMenuControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -18,6 +18,53 @@
             <converters:DynamicPropertyConverter x:Key="DynamicPropertyConverter"/>
             <converters:RelativeToAbsolutePathConverter x:Key="RelativeToAbsolutePathConverter"/>
             <converters:ItemQuantityConverter x:Key="ItemQuantityConverter"/>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
+            <Style x:Key="SearchTextBoxStyle" TargetType="TextBox">
+                <Setter Property="Height" Value="30"/>
+                <Setter Property="Padding" Value="5,3"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="BorderBrush" Value="{StaticResource PizzaRedBrush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Margin" Value="5,0"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TextBox">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="5">
+                                <Grid>
+                                    <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"/>
+                                    <TextBlock Text="Search..." 
+                                               Foreground="Gray" 
+                                               Margin="{TemplateBinding Padding}"
+                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                               IsHitTestVisible="False">
+                                        <TextBlock.Visibility>
+                                            <Binding Path="Text" RelativeSource="{RelativeSource TemplatedParent}">
+                                                <Binding.Converter>
+                                                    <converters:StringEmptyToVisibilityConverter/>
+                                                </Binding.Converter>
+                                            </Binding>
+                                        </TextBlock.Visibility>
+                                    </TextBlock>
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Checkbox Style - Added from GuestWindow -->
+            <Style x:Key="PizzaCheckBoxStyle" TargetType="CheckBox">
+                <Setter Property="Margin" Value="5,0,0,0"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Foreground" Value="{StaticResource PizzaRedBrush}"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+            </Style>
 
             <DataTemplate x:Key="MenuItemTemplate">
                 <Border BorderBrush="{StaticResource BackgroundBeigeBrush}" BorderThickness="2" CornerRadius="8" Margin="5" Padding="10">
@@ -237,17 +284,108 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Menu Items Area - Left Column -->
+        <!-- Menu Items Area - Left Column (UPDATED with search bars) -->
         <Border Grid.Column="0" Background="{StaticResource PizzaPatternBrush}" 
                 BorderBrush="{StaticResource CrustBrush}" BorderThickness="2" 
                 CornerRadius="10" Padding="10" Margin="5">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
+
+                <!-- Menu Items Header -->
                 <TextBlock Grid.Row="0" Text="Menu Items" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+
+                <!-- Added Menu Items Search Bars -->
+                <Grid Grid.Row="1" Margin="0,0,0,10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Name Search -->
+                    <Grid Grid.Row="0" Margin="0,0,0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" 
+                                  Text="Name:" 
+                                  FontWeight="Bold" 
+                                  VerticalAlignment="Center" 
+                                  Margin="0,0,5,0"/>
+
+                        <TextBox Grid.Column="1" 
+                                Style="{StaticResource SearchTextBoxStyle}"
+                                Text="{Binding ItemNameSearchText, UpdateSourceTrigger=PropertyChanged}"
+                                LostFocus="ItemSearchBox_LostFocus"/>
+
+                        <CheckBox Grid.Column="2" 
+                                 Content="NOT" 
+                                 Style="{StaticResource PizzaCheckBoxStyle}"
+                                 IsChecked="{Binding IsItemNameExcluded, UpdateSourceTrigger=PropertyChanged}"
+                                 Checked="SearchCheckBox_Changed"
+                                 Unchecked="SearchCheckBox_Changed"/>
+
+                        <Button Grid.Column="3" 
+                               Content="🔍" 
+                               Width="40" 
+                               Height="30" 
+                               Background="{StaticResource PizzaRedBrush}"
+                               Foreground="White"
+                               BorderBrush="{StaticResource CrustBrush}"
+                               BorderThickness="1"
+                               Margin="5,0,0,0"
+                               Click="SearchItems_Button_Click"/>
+                    </Grid>
+
+                    <!-- Allergen Search -->
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" 
+                                  Text="Allergen:" 
+                                  FontWeight="Bold" 
+                                  VerticalAlignment="Center" 
+                                  Margin="0,0,5,0"/>
+
+                        <TextBox Grid.Column="1" 
+                                Style="{StaticResource SearchTextBoxStyle}"
+                                Text="{Binding ItemAllergenSearchText, UpdateSourceTrigger=PropertyChanged}"
+                                LostFocus="ItemSearchBox_LostFocus"/>
+
+                        <CheckBox Grid.Column="2" 
+                                 Content="NOT" 
+                                 Style="{StaticResource PizzaCheckBoxStyle}"
+                                 IsChecked="{Binding IsItemAllergenExcluded, UpdateSourceTrigger=PropertyChanged}"
+                                 Checked="SearchCheckBox_Changed"
+                                 Unchecked="SearchCheckBox_Changed"/>
+
+                        <Button Grid.Column="3" 
+                               Content="🔍" 
+                               Width="40" 
+                               Height="30" 
+                               Background="{StaticResource PizzaRedBrush}"
+                               Foreground="White"
+                               BorderBrush="{StaticResource CrustBrush}"
+                               BorderThickness="1"
+                               Margin="5,0,0,0"
+                               Click="SearchItems_Button_Click"/>
+                    </Grid>
+                </Grid>
+
+                <!-- Menu Items Content (pushed down to accommodate search bars) -->
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding GroupedItems}">
                         <ItemsControl.GroupStyle>
                             <GroupStyle>
@@ -276,17 +414,61 @@
             </Grid>
         </Border>
 
-        <!-- Available Menus - Middle Column -->
+        <!-- Available Menus - Middle Column (UPDATED with search bar) -->
         <Border Grid.Column="1" Background="{StaticResource PizzaPatternBrush}" 
                 BorderBrush="DarkGray" BorderThickness="2" 
                 CornerRadius="10" Padding="10" Margin="5">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
+
+                <!-- Available Menus Header -->
                 <TextBlock Grid.Row="0" Text="Available Menus" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+
+                <!-- Added Menu Search Bar -->
+                <Grid Grid.Row="1" Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" 
+                              Text="Name:" 
+                              FontWeight="Bold" 
+                              VerticalAlignment="Center" 
+                              Margin="0,0,5,0"/>
+
+                    <TextBox Grid.Column="1" 
+                             Style="{StaticResource SearchTextBoxStyle}"
+                             Text="{Binding MenuSearchText, UpdateSourceTrigger=PropertyChanged}"
+                             LostFocus="MenuSearchBox_LostFocus"/>
+
+                    <CheckBox Grid.Column="2" 
+                             Content="NOT" 
+                             Style="{StaticResource PizzaCheckBoxStyle}"
+                             IsChecked="{Binding IsMenuNameExcluded, UpdateSourceTrigger=PropertyChanged}"
+                             Checked="SearchCheckBox_Changed"
+                             Unchecked="SearchCheckBox_Changed"/>
+
+                    <Button Grid.Column="3" 
+                            Content="🔍" 
+                            Width="40" 
+                            Height="30" 
+                            Background="{StaticResource PizzaRedBrush}"
+                            Foreground="White"
+                            BorderBrush="{StaticResource CrustBrush}"
+                            BorderThickness="1"
+                            Margin="5,0,0,0"
+                            Click="SearchMenus_Button_Click"/>
+                </Grid>
+
+                <!-- Menu Content (pushed down to accommodate search bar) -->
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding AvailableMenus}" 
                               ItemTemplate="{StaticResource MenuTemplate}" />
                 </ScrollViewer>
@@ -298,7 +480,7 @@
                      HorizontalAlignment="Center" VerticalAlignment="Stretch" 
                      Background="{StaticResource PizzaRedBrush}"/>
 
-        <!-- Order Summary - Right Column -->
+        <!-- Order Summary - Right Column (unchanged) -->
         <Grid Grid.Column="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

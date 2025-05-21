@@ -69,6 +69,7 @@ namespace OnlineRestaurant
 
             // Register navigation service
             services.AddSingleton<INavigationService, NavigationService>();
+            services.AddSingleton<INavigationServiceAsync, NavigationServiceAsync>();
 
             // Register ViewModels
             services.AddTransient<StartupWindowVM>();
@@ -83,6 +84,7 @@ namespace OnlineRestaurant
             services.AddTransient<UserWindowVM>();
             services.AddTransient<GuestWindowVM>();
             services.AddTransient<OrdersControlVM>();
+            services.AddTransient<FoodMenuControlVM>();
 
             services.AddTransient<StartupWindow>();
             services.AddTransient<RegisterWindow>();

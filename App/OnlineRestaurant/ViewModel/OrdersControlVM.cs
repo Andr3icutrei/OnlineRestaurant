@@ -47,14 +47,11 @@ namespace OnlineRestaurant.UI.ViewModel
                 OnPropertyChanged();
             }
         }
-
-        public ICommand ViewOrderDetailsCommand { get; }
         public ICommand CancelOrderCommand { get; }
 
         public OrdersControlVM(IOrderService orderService)
         {
             _orderService = orderService;
-
 
             CancelOrderCommand = new AsyncRelayCommand(CancelOrder_Execute,CancelOrder_CanExecute);
             LoadOrders();
@@ -62,6 +59,10 @@ namespace OnlineRestaurant.UI.ViewModel
 
         public void LoadOrders()
         {
+            SelectedRow = null;
+            CurrentGridData = new ObservableCollection<DataRowVM>();
+            _currentColumns = new Dictionary<string, GridColumnDefinition>();
+
             _orders = new List<Order>(_orderService.GetAllWithReferences());
             List<string> itemsDescription = new List<string>();
             List<string> menusDescription = new List<string>();
@@ -77,8 +78,8 @@ namespace OnlineRestaurant.UI.ViewModel
                 var itemDisplayList = itemNames.Zip(itemsQuantities, (name, qty) => $"{name} x{qty}");
                 var menuDisplayList = menuNames.Zip(menusQuantities, (name, qty) => $"{name} x{qty}");
 
-                string itemsString = string.Join("\n ", itemDisplayList);
-                string menusString = string.Join("\n ", menuDisplayList);
+                string itemsString = string.Join(", ", itemDisplayList);
+                string menusString = string.Join(", ", menuDisplayList);
 
                 itemsDescription.Add(itemsString);
                 menusDescription.Add(menusString);
@@ -87,16 +88,17 @@ namespace OnlineRestaurant.UI.ViewModel
             List<OrderDisplayDataGrid> orderDisplays = new List<OrderDisplayDataGrid>();
             for(int i = 0;i < _orders.Count;i++)
             {
-                orderDisplays.Add(new OrderDisplayDataGrid(_orders[i].Id, _orders[i].Price, _orders[i].State, itemsDescription[i], menusDescription[i]));
+                orderDisplays.Add(new OrderDisplayDataGrid{
+                    Id = _orders[i].Id, 
+                    Price = _orders[i].Price,
+                    State = _orders[i].State, 
+                    ItemDescription = itemsDescription[i],
+                    MenuDescription = menusDescription[i]
+                });
             }
-
-            SelectedRow = null;
-            CurrentGridData = new ObservableCollection<DataRowVM>();
-            _currentColumns = new Dictionary<string, GridColumnDefinition>();
 
             _currentColumns = new Dictionary<string, GridColumnDefinition>
             {
-                ["Id"] = new GridColumnDefinition("Order Id", "Id", typeof(int)),
                 ["Price"] = new GridColumnDefinition("Price", "Price", typeof(decimal)),
                 ["State"] = new GridColumnDefinition("State", "State", typeof(OrderState)),
                 ["Items"] = new GridColumnDefinition("Items", "ItemDescription", typeof(string)),
@@ -111,14 +113,25 @@ namespace OnlineRestaurant.UI.ViewModel
 
         public async Task CancelOrder_Execute()
         {
-            
+            var orderToUpdate = _orders.Find(o => o.Id == SelectedRow.GetOriginalData<OrderDisplayDataGrid>().Id);
+            if (orderToUpdate.State == OrderState.Canceled)
+            {
+                MessageBox.Show("Order already canceled!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return; 
+            }
+
+            orderToUpdate.State = OrderState.Canceled;
+            await _orderService.Update(orderToUpdate);
+
+            MessageBox.Show("Order canceled!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            LoadOrders();
         }
 
         public bool CancelOrder_CanExecute()
         {
             return SelectedRow != null;
         }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 

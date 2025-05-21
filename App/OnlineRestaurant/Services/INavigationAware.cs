@@ -10,4 +10,9 @@ namespace OnlineRestaurant.UI.Services
     {
         void OnNavigatedTo(object parameter);
     }
+
+    public interface INavigationAwareAsync
+    {
+        Task OnNavigatedToAsync(object parameter);
+    }
 }
