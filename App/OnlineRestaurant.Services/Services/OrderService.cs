@@ -30,7 +30,7 @@ namespace OnlineRestaurant.Core.Services
 
         public IEnumerable<Item> GetAllItems(int orderId)
         {
-            return _orderRepository.GetAllItems(orderId);
+            return _orderRepository.GetAllItemsStored(orderId);
         }
 
         public IEnumerable<int> GetAllMenuQuantities(int orderId)

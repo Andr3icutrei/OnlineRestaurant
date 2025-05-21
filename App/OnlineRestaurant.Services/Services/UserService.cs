@@ -26,7 +26,7 @@ namespace OnlineRestaurant.Core.Services
 
         public async Task<User?> CanLoginUserAsync(string password, string username, UserType utype)
         {
-            return await _repository.CanLoginUserAsync(password, username, utype);
+            return await _repository.CanLoginUserProcedureAsync(password, username, utype);
         }
     }
 }

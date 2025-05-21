@@ -16,5 +16,6 @@ namespace OnlineRestaurant.Database.Repositories
         IEnumerable<Menu> GetAllMenus(int orderId);
         IEnumerable<int> GetAllItemQuantities(int orderId);
         IEnumerable<int> GetAllMenuQuantites(int orderId);
+        IEnumerable<Item> GetAllItemsStored(int orderId);
     }
 }

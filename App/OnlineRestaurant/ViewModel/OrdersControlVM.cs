@@ -93,7 +93,8 @@ namespace OnlineRestaurant.UI.ViewModel
                     Price = _orders[i].Price,
                     State = _orders[i].State, 
                     ItemDescription = itemsDescription[i],
-                    MenuDescription = menusDescription[i]
+                    MenuDescription = menusDescription[i],
+                    CreatedAt = _orders[i].CreatedAt.ToString() 
                 });
             }
 
@@ -102,7 +103,8 @@ namespace OnlineRestaurant.UI.ViewModel
                 ["Price"] = new GridColumnDefinition("Price", "Price", typeof(decimal)),
                 ["State"] = new GridColumnDefinition("State", "State", typeof(OrderState)),
                 ["Items"] = new GridColumnDefinition("Items", "ItemDescription", typeof(string)),
-                ["Menus"] = new GridColumnDefinition("Menus", "MenuDescription", typeof(string))
+                ["Menus"] = new GridColumnDefinition("Menus", "MenuDescription", typeof(string)),
+                ["Date"] = new GridColumnDefinition("Date","CreatedAt",typeof(string))
             };
 
             foreach (OrderDisplayDataGrid orderDisplay in orderDisplays)

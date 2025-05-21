@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using OnlineRestaurant.Database.Context;
 using OnlineRestaurant.Database.Entities;
 using System;
@@ -30,6 +31,16 @@ namespace OnlineRestaurant.Database.Repositories
                                               Select(io => io.Item).
                                               OrderBy(i => i.Id).
                                               ToList();
+        }
+
+        public IEnumerable<Item> GetAllItemsStored(int orderId)
+        {
+            var parameter = new SqlParameter("@OrderId", orderId);
+
+            return _databaseContext.Items
+                .FromSqlRaw("EXEC GetAllItemsByOrderId @OrderId", parameter)
+                .AsNoTracking()
+                .ToList();
         }
 
         public IEnumerable<int> GetAllMenuQuantites(int orderId)

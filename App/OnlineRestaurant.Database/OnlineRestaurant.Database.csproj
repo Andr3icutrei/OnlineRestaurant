@@ -27,4 +27,8 @@
     <ProjectReference Include="..\OnlineRestaurant.Infrastructure\OnlineRestaurant.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="StoredProcedures\" />
+  </ItemGroup>
+
 </Project>

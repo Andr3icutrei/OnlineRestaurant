@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OnlineRestaurant.UI.View"
         mc:Ignorable="d"
-        Title="LoginWindow" Height="450" Width="300">
+        Title="LoginWindow" Height="500" Width="400"
+        WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -28,17 +29,18 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="20"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Content="Log into your user account:" Style="{StaticResource PapasPizzeriaLabelStyle}"/>
         <Label Grid.Row="2" Content="Email:" Style="{StaticResource PapasPizzeriaLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-        <TextBox Grid.Row="3" Text="{Binding EmailText}" Margin="5" Width="150" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+        <TextBox Grid.Row="3" Text="{Binding EmailText}" Margin="5" Width="200" VerticalAlignment="Center" HorizontalAlignment="Left"/>
         
         <Label Grid.Row="5" Content="Password:" Style="{StaticResource PapasPizzeriaLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
         <TextBox Grid.Row="6" Text="{Binding PasswordText}" Margin="5" Width="150" VerticalAlignment="Center" HorizontalAlignment="Left"/>
 
-        <Grid Grid.Row="8">
+        <Grid Grid.Row="9">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -48,7 +50,7 @@
             <RadioButton Grid.Column="1" Content="Regular user" IsChecked="{Binding IsUserChecked}" Style="{StaticResource PapasPizzeriaRadioButtonStyle}"/>
         </Grid>
         
-        <Grid Grid.Row="9">
+        <Grid Grid.Row="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
