@@ -10,5 +10,6 @@ namespace OnlineRestaurant.Database.Repositories
     public interface IAllergenRepository : IBaseRepository<Allergen>
     {
         Task<bool> IsTypeUniqueAsync(Allergen type);
+        Task<bool> IsTypeUniqueStoredAsync(Allergen allergen);
     }
 }

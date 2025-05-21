@@ -39,7 +39,7 @@ namespace OnlineRestaurant.Core.Services
 
         public async Task<bool> IsTypeUniqueAsync(Allergen allergen)
         {
-            return await _repository.IsTypeUniqueAsync(allergen);
+            return await _repository.IsTypeUniqueStoredAsync(allergen);
         }
 
         public async Task Update(Allergen allergen)

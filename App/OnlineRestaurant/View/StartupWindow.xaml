@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:OnlineRestaurant.UI.View"
         xmlns:vm="clr-namespace:OnlineRestaurant.UI.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="650" Width="500">
+        Title="MainWindow" Height="650" Width="500"
+        WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
         <ResourceDictionary>

@@ -25,7 +25,7 @@ namespace OnlineRestaurant.Core.Services
 
         public async Task<decimal> CalculateMenuPriceAsync(int id)
         {
-            return await _menuRepository.CalculateMenuPriceAsync(id);
+            return await _menuRepository.CalculateMenuPriceStoredAsync(id);
         }
 
         public async Task DeleteAsync(int id)
@@ -40,7 +40,7 @@ namespace OnlineRestaurant.Core.Services
 
         public async Task<IEnumerable<Item?>> GetItemsForMenuAsync(int id)
         {
-            return await _menuRepository.GetItemsForMenuAsync(id);
+            return await _menuRepository.GetItemsForMenuStoredAsync(id);
         }
 
         public async Task<IEnumerable<Menu>?> GetMenusWithReferences()

@@ -272,7 +272,7 @@ namespace OnlineRestaurant.UI.ViewModel
 
             foreach (Order order in orders)
             {
-                var itemNames = _orderService.GetAllItems(order.Id).Select(item => item.Name).ToList();
+                var itemNames = _orderService.GetAllItemsStored(order.Id).Select(item => item.Name).ToList();
                 var itemsQuantities = _orderService.GetAllItemQuantities(order.Id).ToList();
 
                 var menuNames = _orderService.GetAllMenus(order.Id).Select(menu => menu.Name).ToList();

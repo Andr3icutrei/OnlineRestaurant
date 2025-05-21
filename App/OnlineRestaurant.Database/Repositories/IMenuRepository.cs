@@ -13,5 +13,7 @@ namespace OnlineRestaurant.Database.Repositories
         Task<Menu?> GetMenuWithReferencesAsync(int id);
         Task<IEnumerable<Menu>> GetMenusWithReferences();
         Task<decimal> CalculateMenuPriceAsync(int id);
+        Task<IEnumerable<Item?>> GetItemsForMenuStoredAsync(int id);
+        Task<decimal> CalculateMenuPriceStoredAsync(int id);
     }
 }

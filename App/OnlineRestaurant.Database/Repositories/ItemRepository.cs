@@ -3,6 +3,7 @@ using OnlineRestaurant.Database.Context;
 using OnlineRestaurant.Database.Entities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,7 +40,5 @@ namespace OnlineRestaurant.Database.Repositories
             return await _databaseContext.Items.Include(i => i.Pictures).Include(i => i.Allergens).Include(i => i.FoodCategory).
                 FirstOrDefaultAsync(i => i.Id == id && i.DeletedAt == null);
         }
-
-
     }
 }

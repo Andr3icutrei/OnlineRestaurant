@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:OnlineRestaurant.UI.View"
         xmlns:vm="clr-namespace:OnlineRestaurant.UI.ViewModel"
         mc:Ignorable="d"
-        Title="RegisterWindow" Height="550" Width="400">
+        Title="RegisterWindow" Height="550" Width="400"
+        WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
         <ResourceDictionary>

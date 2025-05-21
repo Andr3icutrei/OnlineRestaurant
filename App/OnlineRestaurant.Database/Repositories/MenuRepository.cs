@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using OnlineRestaurant.Database.Context;
 using OnlineRestaurant.Database.Entities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +24,16 @@ namespace OnlineRestaurant.Database.Repositories
                 .Include(mic => mic.Item)
                 .Select(mic => mic.Item)
                 .OrderBy(mic => mic.Id)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Item?>> GetItemsForMenuStoredAsync(int id)
+        {
+            var parameter = new SqlParameter("@MenuId", id);
+
+            return await _databaseContext.Items
+                .FromSqlRaw("EXEC GetItemsForMenu @MenuId", parameter)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -54,6 +66,33 @@ namespace OnlineRestaurant.Database.Repositories
                 return 0;
 
             return menu.ItemConfigurations.Sum(mic => mic.Item.Price);
+        }
+
+        public async Task<decimal> CalculateMenuPriceStoredAsync(int id)
+        {
+            var totalPriceParameter = new SqlParameter
+            {
+                ParameterName = "@TotalPrice",
+                SqlDbType = SqlDbType.Decimal,
+                Precision = 10,
+                Scale = 2,
+                Direction = ParameterDirection.Output
+            };
+
+            var menuIdParameter = new SqlParameter
+            {
+                ParameterName = "@MenuId",
+                SqlDbType = SqlDbType.Int,
+                Value = id
+            };
+
+            await _databaseContext.Database.ExecuteSqlRawAsync(
+                "EXEC CalculateMenuPrice @MenuId, @TotalPrice OUTPUT",
+                menuIdParameter, totalPriceParameter);
+
+            return totalPriceParameter.Value != DBNull.Value
+                ? Convert.ToDecimal(totalPriceParameter.Value)
+                : 0m;
         }
     } 
 }

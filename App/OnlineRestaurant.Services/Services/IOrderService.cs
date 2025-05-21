@@ -18,5 +18,7 @@ namespace OnlineRestaurant.Core.Services
         IEnumerable<int> GetAllItemQuantities(int orderId);
         IEnumerable<int> GetAllMenuQuantities(int orderId);
         Task Update(Order order);
+        IEnumerable<Item> GetAllItemsStored(int orderId);
+
     }
 }
